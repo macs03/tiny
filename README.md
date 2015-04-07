@@ -11,3 +11,5 @@ Yacson Ramirez
 Desarrollar:
 
 Para colaborar en el desarrollo se recomienda utilizar netbeans 8.0.2 con un JDK 1.8
+
+El proyecto esta desarrollado en la carpeta tiny2015 las otras carpetas fueron tomadas en base para desarrollar el proyecto
