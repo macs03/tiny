@@ -9,6 +9,7 @@
  *  @author Miguel Cárdenas
  *  @author Yorman Castellanos
  *  @author Yacson Ramirez
+ *  @author Jorge Gomez
  */
 public class principal {
     
