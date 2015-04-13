@@ -35,7 +35,22 @@ terminal TIMES;
 terminal OVER;
 terminal LPAREN;
 terminal RPAREN;
-terminal SEMI;
+terminal PUNTOCOMA;
+terminal INT;
+terminal BOOLEAN;
+terminal VOID;
+terminal RETORNAR;
+terminal BEGIN;
+terminal FOR;
+terminal AND;
+terminal OR;
+terminal LCORCHETE;
+terminal RCORCHETE;
+terminal MT;
+terminal LEQT;
+terminal MEQT;
+terminal DIF;
+terminal COMA;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -63,7 +78,7 @@ program     ::= stmt_seq:s	{: if(modoDepuracion) System.out.println("\t regla 1"
 					:}
 		;
 
-stmt_seq    ::= stmt_seq:ini SEMI stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2a"); 
+stmt_seq    ::= stmt_seq:ini PUNTOCOMA stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2a"); 
 						NodoBase hijoActual = ini;
 						if(hijoActual !=null){
 							while(hijoActual.TieneHermano()){
