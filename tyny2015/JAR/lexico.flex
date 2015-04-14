@@ -34,8 +34,8 @@ import java_cup.runtime.*;
 
 
 digito		= [0-9]
-numero		= {digito}+
-letra			= [a-zA-Z]
+numero		= {digito}+|("-"{digito}+)?
+letra           = [a-zA-Z]
 identificador	= {letra}+
 nuevalinea		= \n | \n\r | \r\n
 espacio		= [ \t]+
@@ -103,8 +103,8 @@ espacio		= [ \t]+
 ")"             {	if(debug) System.out.println("token RPAREN");
 			return sf.newSymbol("RPAREN",sym.RPAREN);
 			}
-";"             {	if(debug) System.out.println("token PUNTOCOMA");
-			return sf.newSymbol("PUNTOCOMA",sym.PUNTOCOMA);
+";"             {	if(debug) System.out.println("token PCOMA");
+			return sf.newSymbol("PCOMA",sym.PCOMA);
 			}
 ","             {	if(debug) System.out.println("token COMA");
 			return sf.newSymbol("COMA",sym.COMA);

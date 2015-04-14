@@ -35,7 +35,7 @@ terminal TIMES;
 terminal OVER;
 terminal LPAREN;
 terminal RPAREN;
-terminal PUNTOCOMA;
+terminal PCOMA;
 terminal INT;
 terminal BOOLEAN;
 terminal VOID;
@@ -65,12 +65,21 @@ non terminal NodoBase exp;
 non terminal NodoBase simple_exp;
 non terminal NodoBase term;
 non terminal NodoBase factor;
+non terminal NodoBase for_stmt;
+non terminal NodoBase function_stmt;
+non terminal NodoBase procedure_stmt;
+non terminal NodoBase vector;
+non terminal NodoBase parametro_seq;
+non terminal NodoBase parametro;
+non terminal NodoBase declarar_stmt;
+non terminal NodoBase llamarfunction_stmt;
 
 /* Precedencia de operadores */
 precedence left PLUS;
 precedence left MINUS;
 precedence left TIMES;
 
+/* Falta precedencia de los operadores logicos */
 
 /* REGLAS GRAMATICALES */
 program     ::= stmt_seq:s	{: if(modoDepuracion) System.out.println("\t regla 1"); 
@@ -78,7 +87,7 @@ program     ::= stmt_seq:s	{: if(modoDepuracion) System.out.println("\t regla 1"
 					:}
 		;
 
-stmt_seq    ::= stmt_seq:ini PUNTOCOMA stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2a"); 
+stmt_seq    ::= stmt_seq:ini stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2a"); 
 						NodoBase hijoActual = ini;
 						if(hijoActual !=null){
 							while(hijoActual.TieneHermano()){
@@ -110,10 +119,47 @@ stmt        ::= if_stmt:sif	{: if(modoDepuracion) System.out.println("\t regla 3
             | write_stmt:sesc	{: if(modoDepuracion) System.out.println("\t regla 3e"); 
 					RESULT=sesc;
 					:}
+            | for_stmt {: :}
+
+            | declarar_stmt {: :}
+
+            | function_stmt {: :}
+
+            | llamarfunction_stmt {: :}
+
+            | procedure_stmt {: :}
+            
+            | vector {: :}
+                           
             | error	{: if(modoDepuracion) System.out.println("\t regla 3f"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
 				:}
+            ;
+
+for_stmt    ::= FOR LPAREN assign_stmt:as PCOMA exp:ex PCOMA assign_stmt:as1 RPAREN stmt_seq:stq END
+                {: :}
+                ;
+
+declarar_stmt ::= INT declarar_stmt:dst {: :}
+                  | BOOLEAN {: :}
+                  | ID COMA declarar_stmt:dst1 {: :}
+                  | ID PCOMA {: :}
+                  | vector:vec PCOMA {: :}
+                  ;
+
+function_stmt ::= INT ID LPAREN exp:ex RPAREN BEGIN stmt_seq:stq RETORNAR exp:ex1 END {::}
+                  | BOOLEAN ID LPAREN exp:ex RPAREN BEGIN stmt_seq:stq RETORNAR exp:ex1 END {::}
+                  ;
+
+llamarfunction_stmt ::= ID LPAREN parametro_seq:ps RPAREN PCOMA {::}
+                  ;
+
+procedure_stmt ::= VOID ID LPAREN exp:ex RPAREN BEGIN stmt_seq:stq END {::}            
+                  ;
+
+
+vector ::= ID LCORCHETE NUM RCORCHETE {::}
             ;
 
 if_stmt     ::= IF exp:ex THEN stmt_seq:pthen END	{: if(modoDepuracion) System.out.println("\t regla 4a"); 
@@ -133,7 +179,8 @@ assign_stmt ::= ID:variable 	{: if(modoDepuracion) System.out.println("\t regla 
 				/*lineanum=1000; //Pasar/Obtener la linea correcta por el Simbolo
 				String nombre = variable.getName();*/
 				:}
-			ASSIGN exp:ex	{: if(modoDepuracion) System.out.println("\t regla 6 parte final");
+/*OJO pelao*/
+			ASSIGN exp:ex PCOMA {: if(modoDepuracion) System.out.println("\t regla 6 parte final");
 					if(variable!=null)
 					RESULT = new NodoAsignacion(variable.toString(),ex);
 					else{
@@ -141,9 +188,10 @@ assign_stmt ::= ID:variable 	{: if(modoDepuracion) System.out.println("\t regla 
 					System.out.println("Ocurrio error en cup # 0001");
 					}
 					:}
+
 		;
 
-read_stmt   ::= READ ID:variable	{: if(modoDepuracion) System.out.println("\t regla 7"); 
+read_stmt   ::= READ ID:variable PCOMA{: if(modoDepuracion) System.out.println("\t regla 7"); 
 					System.out.println("Leyendo Variable");
 					if(variable!=null)
 					RESULT = new NodoLeer(variable.toString());
@@ -154,7 +202,7 @@ read_stmt   ::= READ ID:variable	{: if(modoDepuracion) System.out.println("\t re
 					:}
 		;
 
-write_stmt  ::= WRITE exp:ex	{: if(modoDepuracion) System.out.println("\t regla 8"); 
+write_stmt  ::= WRITE exp:ex PCOMA{: if(modoDepuracion) System.out.println("\t regla 8"); 
 					RESULT= new NodoEscribir(ex);
 					:}
 		;
@@ -168,8 +216,38 @@ exp         ::= simple_exp:exI LT simple_exp:exD	{: if(modoDepuracion) System.ou
 		| simple_exp:ex	{: if(modoDepuracion) System.out.println("\t regla 9c"); 
 					RESULT = ex;
 					:}
-		;
+                | simple_exp:ex2 MT simple_exp:exD	{: :}
+		
+                | simple_exp:ex3 MEQT simple_exp:exD	{: :}
 
+                | simple_exp:ex4 LEQT simple_exp:exD	{: :}
+
+                | simple_exp:ex5 DIF simple_exp:exD	{: :}
+
+                | simple_exp:ex6 AND simple_exp:exD	{: :}
+
+                | simple_exp:ex7 OR simple_exp:exD	{: :}
+
+                | simple_exp:exI MT simple_exp:exD	{: :}
+
+                | parametro_seq:pas {::}
+
+                | vector:vec {::}
+               
+               
+
+                
+;
+
+/*Ojo con el null, es mejor preguntar*/
+
+parametro_seq ::= parametro_seq:pas COMA parametro:pa {::}
+                  | parametro:pa1 {::}
+                  ;
+parametro ::= INT simple_exp:se {::}
+              | BOOLEAN simple_exp:se1 {::}
+		   |factor:fac {::} 
+              ;
 simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(modoDepuracion) System.out.println("\t regla 10a"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mas,exD);
 							:}
@@ -213,7 +291,11 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(modoDepuracion) System.out.println("\
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
-		| error	{: if(modoDepuracion) System.out.println("\t regla 12d"); 
+		
+		| llamarfunction_stmt:fs{::}
+
+
+		|error	{: if(modoDepuracion) System.out.println("\t regla 12d"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;
 				:}
