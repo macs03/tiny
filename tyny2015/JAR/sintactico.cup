@@ -69,13 +69,21 @@ non terminal NodoBase term;
 non terminal NodoBase factor;
 non terminal NodoBase for_stmt;
 non terminal NodoBase declarar_stmt;
-non terminal NodoBase function_stmt;
-non terminal NodoBase procedure_stmt;
 non terminal NodoBase parametro_seq;
 non terminal NodoBase parametro;
-non terminal NodoBase llamar_fun_pro;
+non terminal NodoBase llamar_function;
 non terminal NodoBase vector;
-non terminal NodoBase operacion_log;
+non terminal NodoBase function_seq;
+non terminal NodoBase cp;
+non terminal NodoBase function;
+non terminal NodoBase tipo;
+non terminal NodoBase bloque;
+non terminal NodoBase return;
+non terminal NodoBase operacion;
+non terminal NodoBase exp_p;
+non terminal NodoBase procedure;
+non terminal NodoBase fun_pro;
+
 
 /* Precedencia de operadores */
 precedence left PLUS;
@@ -84,10 +92,26 @@ precedence left TIMES;
 
 
 /* REGLAS GRAMATICALES */
-program     ::= stmt_seq:s	{: if(modoDepuracion) System.out.println("\t regla 1"); 
-					ast = s;
-					:}
+program     ::= function_seq cp 
 		;
+function_seq ::= function_seq fun_pro | fun_pro
+                ;
+
+fun_pro ::= function | procedure
+                ;
+
+function ::= tipo ID LPAREN parametro_seq RPAREN bloque return END | tipo ID LPAREN RPAREN bloque return END
+
+                ;
+
+procedure ::= VOID ID LPAREN parametro_seq RPAREN cp
+                ;
+
+cp ::= bloque END
+        ;
+
+bloque ::= BEGIN stmt_seq 
+        ;
 
 stmt_seq    ::= stmt_seq:ini stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2a"); 
 						NodoBase hijoActual = ini;
@@ -125,22 +149,18 @@ stmt        ::= if_stmt:sif	{: if(modoDepuracion) System.out.println("\t regla 3
 
             | declarar_stmt
 
-            | function_stmt
-
-            | procedure_stmt
-
-            | llamar_fun_pro
-
+            | llamar_function
+            
             | error	{: if(modoDepuracion) System.out.println("\t regla 3f"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
 				:}
             ;
 
-if_stmt     ::= IF operacion_log:ex THEN stmt_seq:pthen END	{: if(modoDepuracion) System.out.println("\t regla 4a"); 
+if_stmt     ::= IF operacion:ex THEN stmt_seq:pthen END	{: if(modoDepuracion) System.out.println("\t regla 4a"); 
 		RESULT = new NodoIf(ex,pthen);
 		:}
-		| IF operacion_log:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(modoDepuracion) System.out.println("\t regla 4b"); 
+		| IF operacion:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(modoDepuracion) System.out.println("\t regla 4b"); 
 		RESULT = new NodoIf(ex,pthen,pelse);		
 		:}
 		;
@@ -258,28 +278,30 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(modoDepuracion) System.out.println("\
 for_stmt    ::= FOR LPAREN assign_stmt SEMI exp SEMI assign_stmt RPAREN stmt_seq END
                 ;
 
-declarar_stmt ::= INT declarar_stmt | ID COMA declarar_stmt | ID SEMI | BOOLEAN declarar_stmt | vector SEMI
+declarar_stmt ::= tipo declarar_stmt | ID COMA declarar_stmt | ID SEMI | vector SEMI
                 ;
 
-function_stmt ::= INT ID LPAREN parametro_seq RPAREN BEGIN stmt_seq RETURN exp END | BOOLEAN ID LPAREN parametro_seq RPAREN BEGIN stmt_seq RETURN exp END
-                | INT ID LPAREN RPAREN BEGIN stmt_seq RETURN exp END | BOOLEAN ID LPAREN  RPAREN BEGIN stmt_seq RETURN exp END
-                ;
-
-procedure_stmt ::= VOID ID LPAREN parametro_seq RPAREN BEGIN stmt_seq END
-                | VOID ID LPAREN RPAREN BEGIN stmt_seq END
-                ;
-
-llamar_fun_pro ::= ID LPAREN parametro_seq RPAREN SEMI | ID LPAREN RPAREN SEMI
+llamar_function ::= ID LPAREN parametro_seq RPAREN SEMI | ID LPAREN RPAREN SEMI
                 ;
 
 parametro_seq ::= parametro_seq COMA parametro | parametro
                 ;
 
-parametro ::= INT factor | BOOLEAN factor
+parametro ::= tipo factor | factor 
                 ;
 
 vector ::= ID LCORCHETE NUM RCORCHETE
                 ;
 
-operacion_log ::= exp AND exp | exp OR exp | exp
+
+operacion ::= exp_p OR operacion | exp_p
                 ;
+
+exp_p ::= exp AND exp_p | exp
+               ;
+
+return ::= RETURN operacion SEMI
+            ;
+
+tipo ::= INT | BOOLEAN
+            ;
