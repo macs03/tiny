@@ -103,8 +103,8 @@ espacio		= [ \t]+
 ")"             {	if(debug) System.out.println("token RPAREN");
 			return sf.newSymbol("RPAREN",sym.RPAREN);
 			}
-";"             {	if(debug) System.out.println("token PCOMA");
-			return sf.newSymbol("PCOMA",sym.PCOMA);
+";"             {	if(debug) System.out.println("token SEMI");
+			return sf.newSymbol("SEMI",sym.SEMI);
 			}
 ","             {	if(debug) System.out.println("token COMA");
 			return sf.newSymbol("COMA",sym.COMA);
@@ -118,8 +118,8 @@ espacio		= [ \t]+
 "void"          {       if(debug) System.out.println("token VOID");
 			return sf.newSymbol("VOID",sym.VOID);
 			}
-"return"        {       if(debug) System.out.println("token RETORNAR");
-			return sf.newSymbol("RETORNAR",sym.RETORNAR);
+"return"        {       if(debug) System.out.println("token RETURN");
+			return sf.newSymbol("RETURN",sym.RETURN);
 			}
 "begin"         {       if(debug) System.out.println("token BEGIN");
 			return sf.newSymbol("BEGIN",sym.BEGIN);
