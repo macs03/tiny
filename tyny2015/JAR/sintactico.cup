@@ -194,8 +194,6 @@ exp         ::= simple_exp:exI LT simple_exp:exD	{: if(modoDepuracion) System.ou
 		| simple_exp:ex	{: if(modoDepuracion) System.out.println("\t regla 9c"); 
 					RESULT = ex;
 					:}
-                | parametro_seq
-
                 | simple_exp MT simple_exp
 
                 | simple_exp MEQT simple_exp
@@ -263,21 +261,21 @@ for_stmt    ::= FOR LPAREN assign_stmt SEMI exp SEMI assign_stmt RPAREN stmt_seq
 declarar_stmt ::= INT declarar_stmt | ID COMA declarar_stmt | ID SEMI | BOOLEAN declarar_stmt | vector SEMI
                 ;
 
-function_stmt ::= INT ID LPAREN exp RPAREN BEGIN stmt_seq RETURN exp END | BOOLEAN ID LPAREN exp RPAREN BEGIN stmt_seq RETURN exp END
+function_stmt ::= INT ID LPAREN parametro_seq RPAREN BEGIN stmt_seq RETURN exp END | BOOLEAN ID LPAREN parametro_seq RPAREN BEGIN stmt_seq RETURN exp END
                 | INT ID LPAREN RPAREN BEGIN stmt_seq RETURN exp END | BOOLEAN ID LPAREN  RPAREN BEGIN stmt_seq RETURN exp END
                 ;
 
-procedure_stmt ::= VOID ID LPAREN exp RPAREN BEGIN stmt_seq END
+procedure_stmt ::= VOID ID LPAREN parametro_seq RPAREN BEGIN stmt_seq END
                 | VOID ID LPAREN RPAREN BEGIN stmt_seq END
                 ;
 
-llamar_fun_pro ::= ID LPAREN exp RPAREN SEMI | ID LPAREN RPAREN SEMI
+llamar_fun_pro ::= ID LPAREN parametro_seq RPAREN SEMI | ID LPAREN RPAREN SEMI
                 ;
 
 parametro_seq ::= parametro_seq COMA parametro | parametro
                 ;
 
-parametro ::= INT simple_exp | BOOLEAN simple_exp
+parametro ::= INT factor | BOOLEAN factor
                 ;
 
 vector ::= ID LCORCHETE NUM RCORCHETE
