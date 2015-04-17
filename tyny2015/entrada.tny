@@ -1,0 +1,8 @@
+void fun(int a, int b) 
+begin
+    int c;
+end
+begin
+    int a,b;
+    fun(a,b);
+end
