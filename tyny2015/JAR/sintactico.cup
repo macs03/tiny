@@ -4,7 +4,7 @@ import java_cup.runtime.*;
 import ast.*;
 
 action code {:
-	private boolean modoDepuracion=false;
+	private boolean modoDepuracion=true;
 	private NodoBase ast=null;
 	private int lineanum=0;
 	
@@ -51,6 +51,7 @@ terminal BEGIN;
 terminal VOID;
 terminal LCORCHETE;
 terminal RCORCHETE;
+terminal LINEANUEVA;
 
 
 
@@ -83,6 +84,8 @@ non terminal NodoBase operacion;
 non terminal NodoBase exp_p;
 non terminal NodoBase procedure;
 non terminal NodoBase fun_pro;
+non terminal NodoBase separar;
+non terminal NodoBase lineas;
 
 
 /* Precedencia de operadores */
@@ -92,28 +95,64 @@ precedence left TIMES;
 
 
 /* REGLAS GRAMATICALES */
-program     ::= function_seq cp 
+program     ::= function_seq cp {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: program ::= funtion_seq cp ");    
+                                :}
 		;
-function_seq ::= function_seq fun_pro | fun_pro
+function_seq ::= function_seq fun_pro {:
+                                        if (modoDepuracion)
+                                            System.out.println("\t regla: function_seq ::= function_seq"); 
+                                  :}
+
+                    | fun_pro {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: function_seq ::= fun_pro ");    
+                                :}
                 ;
 
-fun_pro ::= function | procedure
+fun_pro ::= function {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: fun_pro ::=  function ");    
+                                :}
+                | procedure {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: fun_pro ::=  procedure ");    
+                                :}
                 ;
 
-function ::= tipo ID LPAREN parametro_seq RPAREN bloque return END | tipo ID LPAREN RPAREN bloque return END
+function ::= tipo ID LPAREN parametro_seq RPAREN bloque return END {:
+                                    if (modoDepuracion)
+                                    System.out.println("\t regla: function ::= tipo ID LPAREN parametro_seq RPAREN bloque return END");
+                                :}
+
+
+                                | tipo ID LPAREN RPAREN bloque return END {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: function ::= tipo ID LPAREN RPAREN bloque return END ");    
+                                :}
 
                 ;
 
-procedure ::= VOID ID LPAREN parametro_seq RPAREN cp
+procedure ::= VOID ID LPAREN parametro_seq RPAREN cp {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: procedure ::= VOID ID LPAREN parametro_seq RPAREN cp" );   
+                                :}
                 ;
 
-cp ::= bloque END
+cp ::= bloque END{:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla:cp ::= bloque END");    
+                                :}
         ;
 
-bloque ::= BEGIN stmt_seq 
+bloque ::= BEGIN stmt_seq {:
+                                if (modoDepuracion)
+                                    System.out.println("\t regla: bloque ::= BEGIN stmt_seq");    
+                                :}
         ;
 
-stmt_seq    ::= stmt_seq:ini stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2a"); 
+stmt_seq    ::= stmt_seq:ini stmt:sent	{: if(modoDepuracion) System.out.println("\t regla stmt_seq    ::= stmt_seq  "); 
 						NodoBase hijoActual = ini;
 						if(hijoActual !=null){
 							while(hijoActual.TieneHermano()){
@@ -125,183 +164,270 @@ stmt_seq    ::= stmt_seq:ini stmt:sent	{: if(modoDepuracion) System.out.println(
 							RESULT=sent;
 						}
 						:}
-            | stmt:sent	{: if(modoDepuracion) System.out.println("\t regla 2b"); 
+            | stmt:sent	{: if(modoDepuracion) System.out.println("\t regla stmt_seq ::= stmt"); 
 				RESULT=sent;				
 				:}
 		;
 
-stmt        ::= if_stmt:sif	{: if(modoDepuracion) System.out.println("\t regla 3a"); 
+stmt        ::= if_stmt:sif	{: if(modoDepuracion) System.out.println("\t regla stmt::= if_stmt "); 
 					RESULT=sif;
 					:}
-            | repeat_stmt:srep	{: if(modoDepuracion) System.out.println("\t regla 3b"); 
+            | repeat_stmt:srep	{: if(modoDepuracion) System.out.println("\t regla stmt ::= repeat_stmt"); 
 						RESULT=srep;
 						:}
-            | assign_stmt:sasi	{: if(modoDepuracion) System.out.println("\t regla 3c"); 
+            | assign_stmt:sasi	{: if(modoDepuracion) System.out.println("\t regla stmt ::= assign_stmt"); 
 						RESULT=sasi;
 						:}
-            | read_stmt:slec	{: if(modoDepuracion) System.out.println("\t regla 3d"); 
+            | read_stmt:slec	{: if(modoDepuracion) System.out.println("\t regla stmt ::= read_stmt"); 
 					RESULT=slec;
 					:}
-            | write_stmt:sesc	{: if(modoDepuracion) System.out.println("\t regla 3e"); 
+            | write_stmt:sesc	{: if(modoDepuracion) System.out.println("\t regla stmt ::= write_stmt"); 
 					RESULT=sesc;
 					:}
-            | for_stmt 
+            | for_stmt:sfor          {: if(modoDepuracion) System.out.println("\t regla stmt ::= for_stmt"); 
+					RESULT=sfor;
+					:}
 
-            | declarar_stmt
+            | declarar_stmt:sdecl     {: if(modoDepuracion) System.out.println("\t regla stmt ::= declarar_stmt"); 
+					RESULT=sdecl;
+					:}
 
-            | llamar_function
+            | llamar_function:sllam   {: if(modoDepuracion) System.out.println("\t regla stmt ::= llamar_function"); 
+					RESULT=sllam;
+					:}
             
-            | error	{: if(modoDepuracion) System.out.println("\t regla 3f"); 
+            | error	{: if(modoDepuracion) System.out.println("\t regla stmt que no consigue ninguna"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
+                                System.exit(0);
 				:}
             ;
 
-if_stmt     ::= IF operacion:ex THEN stmt_seq:pthen END	{: if(modoDepuracion) System.out.println("\t regla 4a"); 
+if_stmt     ::= IF operacion:ex THEN stmt_seq:pthen END	{: if(modoDepuracion) System.out.println("\t regla if_stmt ::= If operacion THEN stmt_Seq END"); 
 		RESULT = new NodoIf(ex,pthen);
 		:}
-		| IF operacion:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(modoDepuracion) System.out.println("\t regla 4b"); 
+		| IF operacion:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(modoDepuracion) System.out.println("\t regla if_stmt ::= IF operacion THEN stmt_seq ELSE stmt_seq END"); 
 		RESULT = new NodoIf(ex,pthen,pelse);		
 		:}
 		;
 
-repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL exp:prueba	{: if(modoDepuracion) System.out.println("\t regla 5"); 
+repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL exp:prueba	{: if(modoDepuracion) System.out.println("\t regla repeat_stmt ::= REPEAT stmt_seq UNTIL exp"); 
 							RESULT = new NodoRepeat(cuerpo,prueba);
 							:}
 		;
 
-assign_stmt ::= ID:variable 	{: if(modoDepuracion) System.out.println("\t regla 6 parte del medio"); 
+assign_stmt ::= ID:variable 	{: if(modoDepuracion) System.out.println("\t regla assign_stmt ::= ID"); 
 				/*lineanum=1000; //Pasar/Obtener la linea correcta por el Simbolo
 				String nombre = variable.getName();*/
 				:}
-			ASSIGN exp:ex	{: if(modoDepuracion) System.out.println("\t regla 6 parte final");
+			ASSIGN exp:ex	{: if(modoDepuracion) System.out.println("\t regla assingn_stmt ::= ID ASSIGN exp SEMI");
 					if(variable!=null)
 					RESULT = new NodoAsignacion(variable.toString(),ex);
 					else{
 					RESULT = null;
 					System.out.println("Ocurrio error en cup # 0001");
+                                        System.exit(0);
 					}
                                         :}
                             SEMI
-                 | vector ASSIGN exp SEMI
+                 | vector ASSIGN exp SEMI{: if(modoDepuracion) System.out.println("\t regla assingn_stmt ::= vector ASSIGN exp SEMI");
+                                        :}
                  
 		;
 
-read_stmt   ::= READ ID:variable	{: if(modoDepuracion) System.out.println("\t regla 7"); 
+read_stmt   ::= READ ID:variable	{: if(modoDepuracion) System.out.println("\t regla ::= READ ID SEMI"); 
 					System.out.println("Leyendo Variable");
 					if(variable!=null)
 					RESULT = new NodoLeer(variable.toString());
 					else{
 					RESULT = null;
 					System.out.println("Ocurrio error en cup # 0002");
+                                        System.exit(0);
 					}
 					:}
                     SEMI
 		;
 
-write_stmt  ::= WRITE exp:ex	{: if(modoDepuracion) System.out.println("\t regla 8"); 
+write_stmt  ::= WRITE exp:ex	{: if(modoDepuracion) System.out.println("\t regla writestmt ::= WRITE exp SEMI"); 
 					RESULT= new NodoEscribir(ex);
 					:}
                     SEMI
 		;
 
-exp         ::= simple_exp:exI LT simple_exp:exD	{: if(modoDepuracion) System.out.println("\t regla 9a"); 
+exp         ::= simple_exp:exI LT simple_exp:exD	{: if(modoDepuracion) System.out.println("\t regla exp ::= simple_exp LT simple_exp"); 
 								RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
 								:} 
-		| simple_exp:exI EQ simple_exp:exD	{: if(modoDepuracion) System.out.println("\t regla 9b"); 
+		| simple_exp:exI EQ simple_exp:exD	{: if(modoDepuracion) System.out.println("\t regla exp ::= simple_exp EQ simple_exp"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
 							:}
-		| simple_exp:ex	{: if(modoDepuracion) System.out.println("\t regla 9c"); 
+		| simple_exp:ex	{: if(modoDepuracion) System.out.println("\t regla exp::= simple_exp"); 
 					RESULT = ex;
 					:}
-                | simple_exp MT simple_exp
+                | simple_exp MT simple_exp{: if(modoDepuracion) System.out.println("\t regla exp::= simple_exp MT simple_exp"); 
+					
+					:}
 
-                | simple_exp MEQT simple_exp
+                | simple_exp MEQT simple_exp{: if(modoDepuracion) System.out.println("\t regla exp::= simple_exp MEQT simple_exp"); 
+					
+					:}
 
-                | simple_exp LEQT simple_exp
+                | simple_exp LEQT simple_exp{: if(modoDepuracion) System.out.println("\t regla exp::= simple_exp LEQT simple_exp"); 
+					
+					:}
 		
-                | simple_exp DIF simple_exp
+                | simple_exp DIF simple_exp{: if(modoDepuracion) System.out.println("\t regla exp::= simple_exp DIF simple_exp"); 
+					
+					:}
                 
                
                 ;
 
-simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(modoDepuracion) System.out.println("\t regla 10a"); 
+simple_exp  ::= simple_exp:exI PLUS term:exD	{: if(modoDepuracion) System.out.println("\t regla simple_exp := simple_exp PLUS term"); 
 							RESULT = new NodoOperacion(exI,tipoOp.mas,exD);
 							:}
-		| simple_exp:exI MINUS term:exD	{: if(modoDepuracion) System.out.println("\t regla 10b"); 
+		| simple_exp:exI MINUS term:exD	{: if(modoDepuracion) System.out.println("\t regla simple_exp := simple_exp MINUS term"); 
 							RESULT = new NodoOperacion(exI,tipoOp.menos,exD);
 							:}
-		| term:ex	{: if(modoDepuracion) System.out.println("\t regla 10c"); 
+		| term:ex	{: if(modoDepuracion) System.out.println("\t regla simple_exp :=term"); 
 				RESULT=ex;
 				:}
 		;
 
-term        ::= term:exI TIMES factor:exD	{: if(modoDepuracion) System.out.println("\t regla 11a"); 
+term        ::= term:exI TIMES factor:exD	{: if(modoDepuracion) System.out.println("\t regla term::= term TIMES factor"); 
 							RESULT = new NodoOperacion(exI,tipoOp.por,exD);
 							:}
-		| term:exI OVER factor:exD	{: if(modoDepuracion) System.out.println("\t regla 11b"); 
+		| term:exI OVER factor:exD	{: if(modoDepuracion) System.out.println("\t regla term::= term OVER factor"); 
 						RESULT = new NodoOperacion(exI,tipoOp.entre,exD);
 						:}
-		| factor:ex	{: if(modoDepuracion) System.out.println("\t regla 11c"); 
+		| factor:ex	{: if(modoDepuracion) System.out.println("\t regla term::= factor"); 
 					RESULT=ex;
 					:}
 		;
 
-factor      ::= LPAREN exp:ex RPAREN	{: if(modoDepuracion) System.out.println("\t regla 12a"); 
+factor      ::= LPAREN exp:ex RPAREN	{: if(modoDepuracion) System.out.println("\t regla factor ::= LPAREN exp RPAREN"); 
 							RESULT = ex;
 							:}
-		| NUM:valor	{: if(modoDepuracion) System.out.println("\t regla 12b"); 
+		| NUM:valor	{: if(modoDepuracion) System.out.println("\t regla factor ::= NUM"); 
 					System.out.println("Devolvi nodo numero entero");
 					if(valor!=null){
 						RESULT= new NodoValor(valor);					
 					}else{
 						RESULT = null;
 						System.out.println("Ocurrio error en cup # 0005");
+                                                System.exit(0);
 					}
 					:}
-		| ID:variable	{: if(modoDepuracion) System.out.println("\t regla 12c"); 
+		| ID:variable	{: if(modoDepuracion) System.out.println("\t regla factor ::= ID"); 
 					if(variable!=null){
 						System.out.println("Construyendo Nodo ID para Lexema: "+ variable.toString());
 						RESULT= new NodoIdentificador(variable.toString());		
 					}else{
 						RESULT = null;
 						System.out.println("Ocurrio error en cup # 0005");
+                                                System.exit(0);
 					}
 					:}
-                | vector
+                | vector        {: if(modoDepuracion) System.out.println("\t regla factor ::= vector");
 
-		| error	{: if(modoDepuracion) System.out.println("\t regla 12d"); 
+                                :}
+                | llamar_function{: if(modoDepuracion) System.out.println("\t regla para llamar funciones dentro de los parametros de otra factor ::= llamar_function");
+
+                                :}
+
+                |               {:
+                                    if(modoDepuracion)
+                                        System.out.println("\t regla factor ::= nada");
+                                :}
+
+		| error	{: if(modoDepuracion) System.out.println("\t regla factor no consigue ninguna"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;
+                                System.exit(0);
 				:}
 		;
-for_stmt    ::= FOR LPAREN assign_stmt SEMI exp SEMI assign_stmt RPAREN stmt_seq END
+for_stmt    ::= FOR LPAREN assign_stmt SEMI exp SEMI assign_stmt RPAREN stmt_seq END{:
+                                if(modoDepuracion) System.out.println("\t Regla declarando for for_stmt ::= FOR LPAREN assign_stmt SEMI exp SEMI assign_stmt RPAREN stmt_seq END"); 
+                                    :}
                 ;
 
-declarar_stmt ::= tipo declarar_stmt | ID COMA declarar_stmt | ID SEMI | vector SEMI
+declarar_stmt ::= tipo declarar_stmt {:
+                                if(modoDepuracion) System.out.println("\t Regla declarar_stmt ::= tipo declarar_stmt"); 
+                                    :}
+                | ID COMA declarar_stmt{:
+                                if(modoDepuracion) System.out.println("\t Regla declarar_stmt ::= ID COMA declarar_stmt"); 
+                                    :} 
+                | ID SEMI {:
+                                if(modoDepuracion) System.out.println("\t Regla declarar_stmt ::= ID SEMI"); 
+                                    :}
+                | vector SEMI{:
+                                if(modoDepuracion) System.out.println("\t Regla declarar_stmt ::= vector SEMI"); 
+                                    :}
                 ;
 
-llamar_function ::= ID LPAREN parametro_seq RPAREN SEMI | ID LPAREN RPAREN SEMI
+llamar_function ::= ID LPAREN parametro_seq RPAREN SEMI {:
+                                if(modoDepuracion) System.out.println("\t Regla llamar_function ::= ID LPAREN parametro_seq RPAREN SEMI"); 
+                                    :}
+                | ID LPAREN RPAREN SEMI{:
+                                if(modoDepuracion) System.out.println("\t Regla llamar_function ::= ID LPAREN RPAREN SEMI"); 
+                                    :}
                 ;
 
-parametro_seq ::= parametro_seq COMA parametro | parametro
+parametro_seq ::= parametro_seq COMA parametro {:
+                                if(modoDepuracion) System.out.println("\t Regla parametro_seq ::= parametro_Seq COMA parametro"); 
+                                    :}
+                | parametro{:
+                                if(modoDepuracion) System.out.println("\t Regla parametro_seq ::= parametro"); 
+                                    :}
                 ;
 
-parametro ::= tipo factor | factor 
+parametro ::= tipo factor {:
+                                if(modoDepuracion) System.out.println("\t Regla parametro ::= tipo factor"); 
+                                    :}
+                | factor {:
+                                if(modoDepuracion) System.out.println("\t Regla parametro ::= factor"); 
+                                    :}
                 ;
 
-vector ::= ID LCORCHETE NUM RCORCHETE
+vector ::= ID LCORCHETE NUM RCORCHETE{:
+                                if(modoDepuracion) System.out.println("\t Regla vector ::= ID LCORCHETE NUM RECORCHETE"); 
+                                    :}
                 ;
 
 
-operacion ::= exp_p OR operacion | exp_p
+operacion ::= exp_p OR operacion {:
+                                if(modoDepuracion) System.out.println("\t Regla operacion ::= exp_p OR operacion"); 
+                                    :}
+                | exp_p{:
+                                if(modoDepuracion) System.out.println("\t Regla operacion ::= exp_p"); 
+                                    :}
                 ;
 
-exp_p ::= exp AND exp_p | exp
+exp_p ::= exp AND exp_p {:
+                                if(modoDepuracion) System.out.println("\t Regla exp_p ::= exp AND exp_p"); 
+                                    :}
+                | exp{:
+                                if(modoDepuracion) System.out.println("\t Regla exp_p ::= exp"); 
+                                    :}
                ;
 
-return ::= RETURN operacion SEMI
+return ::= RETURN operacion SEMI{:
+                                if(modoDepuracion) System.out.println("\t Regla return ::= RETURN operacion SEMI"); 
+                                    :}
             ;
 
-tipo ::= INT | BOOLEAN
+tipo ::= INT{:
+                                if(modoDepuracion) System.out.println("\t Regla tipo ::= INT"); 
+                                    :}
+        | BOOLEAN{:
+                                if(modoDepuracion) System.out.println("\t Regla tipo ::= BOOLEAN"); 
+                                    :}
             ;
+separar ::=
+	lineas {: :}
+	| {: :}
+;
+
+lineas ::=
+	lineas LINEANUEVA {: :}
+	| LINEANUEVA {: :}
+;

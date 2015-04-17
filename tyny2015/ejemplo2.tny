@@ -1,0 +1,9 @@
+int numero()
+begin
+    int a;
+    return a;
+end
+
+begin
+    numero();
+end

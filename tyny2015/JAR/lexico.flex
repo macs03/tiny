@@ -146,7 +146,12 @@ espacio		= [ \t]+
 {identificador}	{	if(debug) System.out.println("token ID");
 				return sf.newSymbol("ID",sym.ID,new String(yytext()));
 			}
-{nuevalinea}       {lineanum++;}
+{nuevalinea} {
+	lineanum++;
+	if(debug)
+		System.out.println("token LINEANUEVA");
+	return sf.newSymbol("LINEANUEVA",sym.LINEANUEVA);
+}
 {espacio}    { /* saltos espacios en blanco*/}
 "{"[^}]+"}"  { /* salto comentarios */ if(debug) System.out.println("token COMENTARIO"); }
 .               {System.err.println("Caracter Ilegal encontrado en analisis lexico: " + yytext() + "\n");}

@@ -1,0 +1,11 @@
+void laFuncion()
+begin
+    int a=5;
+    int b=5;
+    int c;
+    c = a+b+c;
+end
+
+begin
+    laFuncion();
+end

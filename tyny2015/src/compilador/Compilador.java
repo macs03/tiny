@@ -23,14 +23,21 @@ public class Compilador {
 		@SuppressWarnings("deprecation")
 		SymbolFactory sf = new DefaultSymbolFactory();
 		parser parser_obj;
-		if (args.length==0) 
+		if (args.length==0) {
 			parser_obj=new parser(new Scanner(System.in,sf),sf);
-		else 
+                        System.out.println("entro en if");
+                }
+		else {
 			parser_obj=new parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf);
+                        System.out.println("entro en else");
+                }
 
-		UtGen.debug=true; //NO muestro mensajes de depuracion del generador (UTGen) para que el codigo sea compatible con la version visual de la TM
+		UtGen.debug=false; //NO muestro mensajes de depuracion del generador (UTGen) para que el codigo sea compatible con la version visual de la TM
 		//Para ver depuracion de analisis sintactico se debe ir al parser.java y colocar modoDepuracion en true
-		parser_obj.parse();
+                
+		System.out.println("aqui llega");
+                parser_obj.parse();
+                System.out.println("inicializo el parse");
 		NodoBase root=parser_obj.action_obj.getASTroot();
 		System.out.println();
 		System.out.println("IMPRESION DEL AST GENERADO");
@@ -41,6 +48,7 @@ public class Compilador {
 		ts.ImprimirClaves();
 	    //REALIZAR ACA ANALISIS SEMANTICO
 		Generador.setTablaSimbolos(ts);
+                
 		Generador.generarCodigoObjeto(root);
 	}
 
