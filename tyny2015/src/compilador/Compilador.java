@@ -27,9 +27,9 @@ public class Compilador {
 		parser parser_obj;
 
 		if (args.length==0) 
-			parser_obj=new parser(new Scanner(new java.io.FileInputStream("ejemplo2.tny"),sf),sf);
+			parser_obj=new parser(new Scanner(new java.io.FileInputStream("entrada.tny"),sf),sf);
 		else 
-			parser_obj=new parser(new Scanner(new java.io.FileInputStream("ejemplo2.tny"),sf),sf);
+			parser_obj=new parser(new Scanner(new java.io.FileInputStream("entrada.tny"),sf),sf);
 
 
 		UtGen.debug=false; //NO muestro mensajes de depuracion del generador (UTGen) para que el codigo sea compatible con la version visual de la TM
@@ -43,13 +43,13 @@ public class Compilador {
 		System.out.println("IMPRESION DEL AST GENERADO");
 		System.out.println();
 		ast.Util.imprimirAST(root);
-		TablaSimbolos ts = new TablaSimbolos();
-		ts.cargarTabla(root);
-		ts.ImprimirClaves();
-	    //REALIZAR ACA ANALISIS SEMANTICO
-		Generador.setTablaSimbolos(ts);
-                
-		Generador.generarCodigoObjeto(root);
+//		TablaSimbolos ts = new TablaSimbolos();
+//		ts.cargarTabla(root);
+//		ts.ImprimirClaves();
+//	    //REALIZAR ACA ANALISIS SEMANTICO
+//		Generador.setTablaSimbolos(ts);
+//                
+//		Generador.generarCodigoObjeto(root);
                     
                     
 	}

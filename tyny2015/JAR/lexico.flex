@@ -34,8 +34,8 @@ import java_cup.runtime.*;
 
 
 digito		= [0-9]
-numero		= {digito}+|("-"{digito}+)?
-letra           = [a-zA-Z]
+numero		= {digito}+
+letra			= [a-zA-Z]
 identificador	= {letra}+
 nuevalinea		= \n | \n\r | \r\n
 espacio		= [ \t]+
@@ -146,12 +146,7 @@ espacio		= [ \t]+
 {identificador}	{	if(debug) System.out.println("token ID");
 				return sf.newSymbol("ID",sym.ID,new String(yytext()));
 			}
-{nuevalinea} {
-	lineanum++;
-	if(debug)
-		System.out.println("token LINEANUEVA");
-	return sf.newSymbol("LINEANUEVA",sym.LINEANUEVA);
-}
+{nuevalinea}       {lineanum++;}
 {espacio}    { /* saltos espacios en blanco*/}
 "{"[^}]+"}"  { /* salto comentarios */ if(debug) System.out.println("token COMENTARIO"); }
 .               {System.err.println("Caracter Ilegal encontrado en analisis lexico: " + yytext() + "\n");}

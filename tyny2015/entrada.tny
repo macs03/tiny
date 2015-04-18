@@ -1,8 +1,46 @@
-void fun(int a, int b)
+void fun()
 begin
-int c;
+    int c;
+    for (a=1;a<5;a=a+1)
+    begin 
+        int a,b,c,d;
+    end
 end
+
+boolean aa(boolean a, int b)
 begin
-int a,b;
-fun(a,b);
+   boolean c;
+    
+    repeat 
+        x = x + 1;
+        read x;
+    until x < 5
+
+   return c;
+end
+
+int pp(int a, boolean b) 
+begin 
+int a;
+return a+b;
+end
+
+begin
+    int a,b;
+    int v[5];
+    if x < 5 then
+        write x;
+    end
+
+    if z<x and B==x  then
+    read d;
+    else
+    v[0] = d;
+    write x;
+    end
+    a = v[4+fun(b,r,true,5)+a];
+    b = fun(a);
+    fun();
+    aa( fun(),true,a,2);
+   
 end
