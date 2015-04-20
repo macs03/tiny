@@ -11,10 +11,10 @@ package ast;
  * @author miguel.cardenas
  */
 public class NodoDeclararVariable extends NodoBase{
-    private String Tipo;
+    private NodoBase Tipo;
     private String id;
 
-    public NodoDeclararVariable(String Tipo, String id) {
+    public NodoDeclararVariable(NodoBase Tipo, String id) {
         super();
         this.Tipo = Tipo;
         this.id = id;
@@ -26,11 +26,11 @@ public class NodoDeclararVariable extends NodoBase{
         this.id = null;
     }
 
-    public String getTipo() {
+    public NodoBase getTipo() {
         return Tipo;
     }
 
-    public void setTipo(String Tipo) {
+    public void setTipo(NodoBase Tipo) {
         this.Tipo = Tipo;
     }
 
