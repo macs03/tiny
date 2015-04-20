@@ -12,38 +12,29 @@ package ast;
  */
 public class NodoDeclararVector extends NodoBase{
     
-    private String id;
-    private NodoBase indice;
     private String Tipo;
+    private NodoBase vector;
+    
 
-    public NodoDeclararVector(String id, NodoBase indice, String Tipo) {
+    public NodoDeclararVector(String Tipo, NodoBase vector ) {
         super();
-        this.id = id;
-        this.indice = indice;
         this.Tipo = Tipo;
+        this.vector = vector;
+        
     }
 
     public NodoDeclararVector() {
         super();
-        this.id = null;
-        this.indice = null;
+        this.vector = null;
         this.Tipo = null;
     }
 
-    public String getId() {
-        return id;
+    public NodoBase getvector() {
+        return vector;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public NodoBase getIndice() {
-        return indice;
-    }
-
-    public void setIndice(NodoBase indice) {
-        this.indice = indice;
+    public void setIndice(NodoBase vector) {
+        this.vector = vector;
     }
 
     public String getTipo() {

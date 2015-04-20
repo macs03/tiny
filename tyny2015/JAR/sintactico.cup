@@ -68,8 +68,8 @@ non terminal NodoBase simple_exp;
 non terminal NodoBase term;
 non terminal NodoBase factor;
 non terminal NodoBase for_stmt;
-non terminal NodoBase declarar_stmt;
 non terminal NodoBase parametro_seq;
+non terminal NodoBase parametro_seq2;
 non terminal NodoBase parametro;
 non terminal NodoBase llamar_functionR;
 non terminal NodoBase llamar_function;
@@ -87,6 +87,10 @@ non terminal NodoBase fun_pro;
 non terminal NodoBase asig;
 non terminal NodoBase paso;
 
+non terminal NodoBase declarar_stmt;
+non terminal NodoBase declaraciones;
+non terminal NodoBase declaracion; 
+
 
 /* Precedencia de operadores */
 precedence left PLUS;
@@ -98,134 +102,110 @@ precedence left TIMES;
 program     ::= function_seq cp {: if (modoDepuracion)
                                     System.out.println("\t regla: program ::= funtion_seq cp ");    
                                 :}
-               | error {: if(modoDepuracion){ System.out.println("\t regla programa invalida"); 
+                |cp
+                | error {: if(modoDepuracion){ System.out.println("\t regla programa invalida"); 
 			       // System.out.println("Ocurrio error en cup # 0004");
 		                RESULT=null;
                                 System.exit(0);
                          }
 	            :}	
 		;
-function_seq ::= function_seq fun_pro | fun_pro 
-
-                 
+function_seq ::= function_seq fun_pro {: if (modoDepuracion)
+                                                System.out.println("\t regla: function_seq ::= funtion_seq fun_pro ");    
+                                       :} 
+                | fun_pro {: if (modoDepuracion)
+                                 System.out.println("\t regla: function_seq ::= fun_pro ");    
+                          :}
                 ;
 
-fun_pro ::= function | procedure
+fun_pro ::= function {: if (modoDepuracion)
+                              System.out.println("\t regla: fun_pro ::= function ");    
+                      :}
+            | procedure {: if (modoDepuracion)
+                              System.out.println("\t regla: fun_pro ::= procedure ");    
+                         :}
                 ;
 
 function ::= tipo ID LPAREN parametro_seq RPAREN bloque return END
-             | error {: if(modoDepuracion){ System.out.println("\t regla function invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+             	
                 ;
 
 procedure ::= VOID ID LPAREN parametro_seq RPAREN cp
 
-            | error {: if(modoDepuracion){ System.out.println("\t regla procedure invalida"); 
-			// System.out.println("Ocurrio error en cup # 0004");
-		           RESULT=null;
-                           System.exit(0);
-                         }
-	            :}	
+           
                 ;
 
 cp ::= bloque END
-        | error {: if(modoDepuracion){ System.out.println("\t regla cp invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
-        ;
+                ;
 
 bloque ::= BEGIN stmt_seq 
-            | error {: if(modoDepuracion){ System.out.println("\t regla bloque invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
-        ;
+                ;
 
-stmt_seq    ::= stmt_seq:ini stmt:sent	
-            | stmt:sent	
-		;
+stmt_seq    ::= stmt_seq stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt_seq ::= stmt_seq stmt ");    
+                                :}	
+               | stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt_seq ::= stmt ");    
+                            :}
+               ;
 
-stmt        ::= if_stmt:sif	
-            | repeat_stmt:srep	
-            | assign_stmt:sasi	
-            | read_stmt:slec	
-            | write_stmt:sesc	
-            | for_stmt 
+stmt        ::= if_stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= if_stmt ");    
+                         :}	
+            | repeat_stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= stmt_repeat ");    
+                          :}	
+            | assign_stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= stmt_assign ");    
+                          :}	
+            | read_stmt	{: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= read_stmt ");    
+                          :}
+            | write_stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= write_stmt");    
+                          :}	
+            | for_stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= for_stmt ");    
+                          :}
 
-            | declarar_stmt
+            | declarar_stmt {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= declarar_stmt ");    
+                          :}
 
-            | llamar_function
-            
-            | error {: if(modoDepuracion){ System.out.println("\t regla stmt que no consigue ninguna"); 
-				System.out.println("Ocurrio error en cup # 0004");
-				RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+            | llamar_function {: if (modoDepuracion)
+                                        System.out.println("\t regla: stmt ::= llamar_function");    
+                          :}
+            	
             ;
 
 if_stmt     ::= IF operacion:ex THEN stmt_seq:pthen END	
 		| IF operacion:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	
                 
-                | error {: if(modoDepuracion){ System.out.println("\t regla if_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+               
 		;
 
 
 repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL operacion:prueba
 
-                | error {: if(modoDepuracion){ System.out.println("\t regla repeat_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+                	
 
 		;
 
 assign_stmt ::= ID:variable ASSIGN operacion:ex SEMI
                  | vector ASSIGN exp SEMI
                  
-                 | error {: if(modoDepuracion){ System.out.println("\t regla assign_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+                 	
                  
 		;
 
 read_stmt   ::= READ ID:variable SEMI
 
-                | error {: if(modoDepuracion){ System.out.println("\t regla read_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+                	
 		;
 
 write_stmt  ::= WRITE operacion:ex SEMI
 
-            | error {: if(modoDepuracion){ System.out.println("\t regla write_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+            
 		;
 
 exp         ::= simple_exp:exI LT simple_exp:exD	
@@ -239,12 +219,7 @@ exp         ::= simple_exp:exI LT simple_exp:exD
 		
                 | simple_exp DIF simple_exp
                 
-                | error {: if(modoDepuracion){ System.out.println("\t regla exp invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+                
                 
                
                 ;
@@ -253,167 +228,94 @@ simple_exp  ::= simple_exp:exI PLUS term:exD
 		| simple_exp:exI MINUS term:exD	
 		| term:ex
 
-                | error {: if(modoDepuracion){ System.out.println("\t regla simple_exp invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+                
 		;
 
 term        ::= term:exI TIMES factor:exD	
 		| term:exI OVER factor:exD	
 		| factor:ex
-                | error {: if(modoDepuracion){ System.out.println("\t regla term invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+               
 		;
 
-factor      ::= LPAREN exp:ex RPAREN	
+factor      ::= LPAREN operacion:ex RPAREN	
 		| NUM:valor	
 		| ID:variable	
                 | vector
                 | llamar_functionR
-                |
-
-		| error    {:	if(modoDepuracion) {System.out.println("\t regla factor que no consigue ninguna"); 
-				System.out.println("Ocurrio error en cup # 0004");
-				RESULT=null;
-                                System.exit(0);
-                               }
-			   :}
+              
 		;
 for_stmt    ::= FOR LPAREN asig SEMI operacion SEMI paso RPAREN bloque END
                 
-                | error {: if(modoDepuracion){ System.out.println("\t regla for_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+             
 
                 ;
 
 asig ::= ID ASSIGN NUM
-            | error {: if(modoDepuracion){ System.out.println("\t regla for_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+           	
 
                 ;
 
 paso ::= ID ASSIGN simple_exp
 
-                    | error {: if(modoDepuracion){ System.out.println("\t regla for_stmt invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
                 ;
 
 
-declarar_stmt ::= tipo declarar_stmt:ds | ID COMA declarar_stmt | ID SEMI | vector SEMI 
+declarar_stmt   ::= tipo declaraciones SEMI
                                 
-                                | error {:if(modoDepuracion){ System.out.println("\t regla declarar_stmt invalida"); 
-                                          System.out.println("Ocurrio error en cup # 0004");
-                                          RESULT=null;
-                                          System.exit(0);
-                                        }
-				:}
                 ;
 
-llamar_functionR ::= ID LPAREN parametro_seq RPAREN 
-                   | error {: if(modoDepuracion){ System.out.println("\t regla llamar_functionR invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+declaraciones   ::= declaraciones COMA declaracion | declaracion 
 
                 ;
 
-llamar_function ::= ID LPAREN parametro_seq RPAREN SEMI 
-                
-                | error {: if(modoDepuracion){ System.out.println("\t regla llamar_function invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+declaracion     ::= ID | vector
+                ;
+
+
+
+
+
+llamar_functionR ::= ID LPAREN parametro_seq2 RPAREN 
+                  
 
                 ;
 
-parametro_seq ::= parametro_seq COMA parametro | parametro
-                | error {: if(modoDepuracion){ System.out.println("\t regla declarar function"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+llamar_function ::= ID LPAREN parametro_seq2 RPAREN SEMI 
+               
 
                 ;
 
-parametro ::= tipo factor | factor 
-               | error {: if(modoDepuracion){ System.out.println("\t regla parametro invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+parametro_seq ::= parametro_seq COMA parametro | parametro |
+               
+
+                ;
+
+parametro ::= tipo factor 
+             	
+                ;
+
+parametro_seq2 ::= parametro_seq2 COMA factor | factor | 
                 ;
 
 vector ::= ID LCORCHETE operacion RCORCHETE
 
-            | error {: if(modoDepuracion){ System.out.println("\t regla vector invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
                 ;
 
 
-operacion ::= exp_p OR operacion | exp_p
-                | error {: if(modoDepuracion){ System.out.println("\t regla operacion invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+operacion ::= operacion OR exp_p | exp_p
+                	
 
                 ;
 
-exp_p ::= exp AND exp_p | exp
-                        | error {: if(modoDepuracion){ System.out.println("\t regla exp_p invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+exp_p ::= exp_p AND exp | exp
+                        
                ;
 
 return ::= RETURN operacion SEMI
 
-            | error {: if(modoDepuracion){ System.out.println("\t regla return invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
     
             ;
 
 tipo ::= INT | BOOLEAN
-             | error {: if(modoDepuracion){ System.out.println("\t regla tipo invalida"); 
-			       // System.out.println("Ocurrio error en cup # 0004");
-		                RESULT=null;
-                                System.exit(0);
-                         }
-	            :}	
+             
             ;
