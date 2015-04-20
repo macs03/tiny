@@ -12,11 +12,11 @@ package ast;
  */
 public class NodoDeclararVector extends NodoBase{
     
-    private String Tipo;
+    private NodoBase Tipo;
     private NodoBase vector;
     
 
-    public NodoDeclararVector(String Tipo, NodoBase vector ) {
+    public NodoDeclararVector(NodoBase Tipo, NodoBase vector ) {
         super();
         this.Tipo = Tipo;
         this.vector = vector;
@@ -37,11 +37,11 @@ public class NodoDeclararVector extends NodoBase{
         this.vector = vector;
     }
 
-    public String getTipo() {
+    public NodoBase getTipo() {
         return Tipo;
     }
 
-    public void setTipo(String Tipo) {
+    public void setTipo(NodoBase Tipo) {
         this.Tipo = Tipo;
     }
     

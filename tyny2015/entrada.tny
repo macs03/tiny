@@ -3,7 +3,7 @@ begin
     int c;
     for (a=1;a<5;a=a+1)
     begin 
-        int a,b,c,d;
+        int a;
     end
 end
 
@@ -26,7 +26,7 @@ return a+b;
 end
 
 begin
-    int a,b;
+    int a;
     int v[5];
     if x < 5 then
         write x;
@@ -38,7 +38,7 @@ begin
     v[0] = d;
     write x;
     end
-    a = v[4+fun(b,r,true,5)+a];
+    a = v[4];
     b = fun(a);
     fun();
     aa( fun(),true,a,2);

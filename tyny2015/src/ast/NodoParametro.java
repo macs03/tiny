@@ -11,10 +11,10 @@ package ast;
  */
 public class NodoParametro extends NodoBase{
     
-    private String tipo;
+    private NodoBase tipo;
     private NodoBase ID;
 
-    public NodoParametro(String tipo, NodoBase ID) {
+    public NodoParametro(NodoBase tipo, NodoBase ID) {
         super();
         this.tipo = tipo;
         this.ID = ID;
@@ -26,11 +26,11 @@ public class NodoParametro extends NodoBase{
         this.ID = null;
     }
 
-    public String getTipo() {
+    public NodoBase getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(NodoBase tipo) {
         this.tipo = tipo;
     }
 
