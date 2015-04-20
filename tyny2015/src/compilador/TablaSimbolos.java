@@ -10,6 +10,14 @@ import ast.NodoIdentificador;
 import ast.NodoIf;
 import ast.NodoOperacion;
 import ast.NodoRepeat;
+import ast.NodoDeclararVector;
+import ast.NodoFor;
+import ast.NodoFunction;
+import ast.NodoProcedure;
+import ast.NodollamaFunction;
+import ast.NodollamaProcedure;
+import ast.NodollamarVector;
+import ast.NodoFuncionR;
 
 public class TablaSimbolos {
 	private HashMap<String, RegistroSimbolo> tabla;
@@ -25,7 +33,7 @@ public class TablaSimbolos {
 		while (raiz != null) {
 	    if (raiz instanceof NodoIdentificador){
 	    	InsertarSimbolo(((NodoIdentificador)raiz).getNombre(),-1);
-	    	//TODO: Añadir el numero de linea y localidad de memoria correcta
+	    	//TODO: Aï¿½adir el numero de linea y localidad de memoria correcta
 	    }
 
 	    /* Hago el recorrido recursivo */
@@ -47,7 +55,29 @@ public class TablaSimbolos {
 	    else if (raiz instanceof NodoOperacion){
 	    	cargarTabla(((NodoOperacion)raiz).getOpIzquierdo());
 	    	cargarTabla(((NodoOperacion)raiz).getOpDerecho());
-	    }
+	    }else if (raiz instanceof NodoDeclararVector) {
+                cargarTabla(((NodoDeclararVector)raiz).getIndice());
+            }else if (raiz instanceof NodoFor) {
+                cargarTabla(((NodoFor)raiz).getComprobacion());
+                cargarTabla(((NodoFor)raiz).getInicio());
+                cargarTabla(((NodoFor)raiz).getPaso());
+                cargarTabla(((NodoFor)raiz).getSeq_sent());
+            }else if (raiz instanceof NodoFunction) {
+                cargarTabla(((NodoFunction)raiz).getParametros());
+                cargarTabla(((NodoFunction)raiz).getSeq_sent());
+                cargarTabla(((NodoFunction)raiz).getRetorna());
+            }else if (raiz instanceof NodoProcedure) {
+                cargarTabla(((NodoProcedure)raiz).getParametros());
+                cargarTabla(((NodoProcedure)raiz).getSeq_sent());
+            }else if (raiz instanceof NodollamaFunction) {
+                cargarTabla(((NodollamaFunction)raiz).getParametros());
+            }else if (raiz instanceof NodollamaProcedure) {
+                cargarTabla(((NodollamaProcedure)raiz).getParametros());
+            }else if (raiz instanceof NodollamarVector) {
+                cargarTabla(((NodollamarVector)raiz).getIndice());
+            }else if (raiz instanceof NodoFuncionR ) {
+                cargarTabla(((NodoFuncionR)raiz).getParametros());
+            }
 	    raiz = raiz.getHermanoDerecha();
 	  }
 	}
