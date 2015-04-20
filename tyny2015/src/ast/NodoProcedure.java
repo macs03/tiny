@@ -15,7 +15,7 @@ public class NodoProcedure extends NodoBase{
      private NodoBase parametros;
      private NodoBase seq_sent;
 
-    public NodoProcedure(NodoBase parametros, NodoBase seq_sent, String nombre) {
+    public NodoProcedure(String nombre,NodoBase parametros, NodoBase seq_sent) {
         super();
         this.nombre = nombre;
         this.parametros = parametros;

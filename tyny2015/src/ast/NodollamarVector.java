@@ -13,24 +13,24 @@ package ast;
 public class NodollamarVector extends NodoBase{
         
     private String id;
-    private NodoBase Indice;
+    private int Indice;
     
-    public NodollamarVector(NodoBase Indice, String id) {
+    public NodollamarVector( String id,int Indice) {
         super();
         this.Indice = Indice;
         this.id = id;
     }
     public NodollamarVector() {
         super();
-        this.Indice = null;
+        this.Indice = 0;
         this.id = null;
     }
 
-    public NodoBase getIndice() {
+    public int getIndice() {
         return Indice;
     }
 
-    public void setIndice(NodoBase Indice) {
+    public void setIndice(int Indice) {
         this.Indice = Indice;
     }
 
