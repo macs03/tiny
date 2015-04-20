@@ -16,8 +16,10 @@ import ast.NodoFunction;
 import ast.NodoProcedure;
 import ast.NodollamaFunction;
 import ast.NodollamaProcedure;
-import ast.NodollamarVector;
 import ast.NodoFuncionR;
+import ast.NodoListaParametros;
+import ast.NodoParametro;
+
 
 public class TablaSimbolos {
 	private HashMap<String, RegistroSimbolo> tabla;
@@ -48,15 +50,18 @@ public class TablaSimbolos {
 	    	cargarTabla(((NodoRepeat)raiz).getCuerpo());
 	    	cargarTabla(((NodoRepeat)raiz).getPrueba());
 	    }
-	    else if (raiz instanceof  NodoAsignacion)
-	    	cargarTabla(((NodoAsignacion)raiz).getExpresion());
+	    else if (raiz instanceof  NodoAsignacion){
+	    	cargarTabla(((NodoAsignacion)raiz).getOperacion());
+	    	cargarTabla(((NodoAsignacion)raiz).getVector());
+            }
 	    else if (raiz instanceof  NodoEscribir)
 	    	cargarTabla(((NodoEscribir)raiz).getExpresion());
 	    else if (raiz instanceof NodoOperacion){
 	    	cargarTabla(((NodoOperacion)raiz).getOpIzquierdo());
 	    	cargarTabla(((NodoOperacion)raiz).getOpDerecho());
 	    }else if (raiz instanceof NodoDeclararVector) {
-                cargarTabla(((NodoDeclararVector)raiz).getIndice());
+                cargarTabla(((NodoDeclararVector)raiz).getTipo());
+                cargarTabla(((NodoDeclararVector)raiz).getvector());
             }else if (raiz instanceof NodoFor) {
                 cargarTabla(((NodoFor)raiz).getComprobacion());
                 cargarTabla(((NodoFor)raiz).getInicio());
@@ -73,10 +78,15 @@ public class TablaSimbolos {
                 cargarTabla(((NodollamaFunction)raiz).getParametros());
             }else if (raiz instanceof NodollamaProcedure) {
                 cargarTabla(((NodollamaProcedure)raiz).getParametros());
-            }else if (raiz instanceof NodollamarVector) {
-                cargarTabla(((NodollamarVector)raiz).getIndice());
             }else if (raiz instanceof NodoFuncionR ) {
                 cargarTabla(((NodoFuncionR)raiz).getParametros());
+            }else if (raiz instanceof NodoListaParametros) {
+                for (int i = 0; i < (((NodoListaParametros)raiz).getLista_parametro()).size(); i++) {
+                    cargarTabla(((NodoListaParametros)raiz).getLista_parametro().get(i));
+                }
+            } else if (raiz instanceof NodoParametro) {
+                cargarTabla(((NodoParametro)raiz).getID());
+                cargarTabla(((NodoParametro)raiz).getTipo());
             }
 	    raiz = raiz.getHermanoDerecha();
 	  }
