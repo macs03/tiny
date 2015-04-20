@@ -52,7 +52,7 @@ public class Util {
 		    	imprimirAST(((NodoRepeat)raiz).getPrueba());
 		    }
 		    else if (raiz instanceof  NodoAsignacion)
-		    	imprimirAST(((NodoAsignacion)raiz).getExpresion());
+		    	imprimirAST(((NodoAsignacion)raiz).getOperacion());
 		    else if (raiz instanceof  NodoEscribir)
 		    	imprimirAST(((NodoEscribir)raiz).getExpresion());
 		    else if (raiz instanceof NodoOperacion){

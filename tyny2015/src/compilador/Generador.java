@@ -82,7 +82,7 @@ public class Generador {
 		if(nodo.TieneHermano())
 			generar(nodo.getHermanoDerecha());
 	}else
-		System.out.println("¡¡¡ERROR: por favor fije la tabla de simbolos a usar antes de generar codigo objeto!!!");
+		System.out.println("ï¿½ï¿½ï¿½ERROR: por favor fije la tabla de simbolos a usar antes de generar codigo objeto!!!");
 }
 
 	private static void generarIf(NodoBase nodo){
@@ -133,7 +133,7 @@ public class Generador {
 		int direccion;
 		if(UtGen.debug)	UtGen.emitirComentario("-> asignacion");		
 		/* Genero el codigo para la expresion a la derecha de la asignacion */
-		generar(n.getExpresion());
+		generar(n.getOperacion());
 		/* Ahora almaceno el valor resultante */
 		direccion = tablaSimbolos.getDireccion(n.getIdentificador());
 		UtGen.emitirRM("ST", UtGen.AC, direccion, UtGen.GP, "asignacion: almaceno el valor para el id "+n.getIdentificador());
