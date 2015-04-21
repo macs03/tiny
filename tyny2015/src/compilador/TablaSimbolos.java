@@ -17,7 +17,7 @@ import ast.NodoProcedure;
 import ast.NodollamaFunction;
 import ast.NodollamaProcedure;
 import ast.NodoFuncionR;
-import ast.NodoListaParametros;
+//import ast.NodoListaParametros;
 import ast.NodoParametro;
 
 
@@ -80,11 +80,11 @@ public class TablaSimbolos {
                 cargarTabla(((NodollamaProcedure)raiz).getParametros());
             }else if (raiz instanceof NodoFuncionR ) {
                 cargarTabla(((NodoFuncionR)raiz).getParametros());
-            }else if (raiz instanceof NodoListaParametros) {
+            }/*else if (raiz instanceof NodoListaParametros) {
                 for (int i = 0; i < (((NodoListaParametros)raiz).getLista_parametro()).size(); i++) {
                     cargarTabla(((NodoListaParametros)raiz).getLista_parametro().get(i));
                 }
-            } else if (raiz instanceof NodoParametro) {
+            }*/ else if (raiz instanceof NodoParametro) {
                 cargarTabla(((NodoParametro)raiz).getID());
                 cargarTabla(((NodoParametro)raiz).getTipo());
             }
