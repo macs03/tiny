@@ -44,14 +44,14 @@ public class Compilador {
 		System.out.println();
 		ast.Util.imprimirAST(root);
                 System.out.println("IMPRESION DE LA TABLA");
-                TablaSimbolos ts = new TablaSimbolos();
+
+              TablaSimbolos ts = new TablaSimbolos();
 		ts.cargarTabla(root);
 		ts.ImprimirClaves();
-//	    //REALIZAR ACA ANALISIS SEMANTICO
-//		Generador.setTablaSimbolos(ts);
-//                
-//		Generador.generarCodigoObjeto(root);
-                    
+////	    //REALIZAR ACA ANALISIS SEMANTICO
+////		Generador.setTablaSimbolos(ts);
+////                
+////		Generador.generarCodigoObjeto(root);
                     
 	}
 

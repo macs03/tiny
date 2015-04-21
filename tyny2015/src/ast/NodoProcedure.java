@@ -11,11 +11,11 @@ package ast;
  * @author miguel.cardenas
  */
 public class NodoProcedure extends NodoBase{
-     private String nombre;
+     private NodoBase nombre;
      private NodoBase parametros;
      private NodoBase seq_sent;
 
-    public NodoProcedure(String nombre,NodoBase parametros, NodoBase seq_sent) {
+    public NodoProcedure(NodoBase nombre,NodoBase parametros, NodoBase seq_sent) {
         super();
         this.nombre = nombre;
         this.parametros = parametros;
@@ -45,11 +45,11 @@ public class NodoProcedure extends NodoBase{
         this.seq_sent = seq_sent;
     }
 
-    public String getNombre() {
+    public NodoBase getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(NodoBase nombre) {
         this.nombre = nombre;
     }
     

@@ -1,11 +1,20 @@
+boolean aa(boolean a, int b)
 begin
+   boolean c;
     
+    repeat 
+        x = x + 1;
+        read x;
+    until x < 5
 
-
-if 5>3 then
-    x=fun(1,2,3);
+   return c;
 end
     
-   
+
+
+begin
+
+  int vector;
+  a= aa(a,b);
    
 end

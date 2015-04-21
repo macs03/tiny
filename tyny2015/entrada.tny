@@ -1,6 +1,6 @@
 void fun()
 begin
-    int c;
+    int c,a,d,j,h,vector[50];
     for (a=1;a<5;a=a+1)
     begin 
         int a;

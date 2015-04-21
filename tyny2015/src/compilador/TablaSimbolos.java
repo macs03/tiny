@@ -5,20 +5,21 @@ import java.util.*;
 
 import ast.NodoAsignacion;
 import ast.NodoBase;
+import ast.NodoDeclararVariable;
 import ast.NodoEscribir;
 import ast.NodoIdentificador;
 import ast.NodoIf;
 import ast.NodoOperacion;
 import ast.NodoRepeat;
-import ast.NodoDeclararVector;
+
 import ast.NodoFor;
 import ast.NodoFunction;
 import ast.NodoProcedure;
 import ast.NodollamaFunction;
 import ast.NodollamaProcedure;
 import ast.NodoFuncionR;
-//import ast.NodoListaParametros;
 import ast.NodoParametro;
+import ast.NodoVector;
 
 
 public class TablaSimbolos {
@@ -59,34 +60,38 @@ public class TablaSimbolos {
 	    else if (raiz instanceof NodoOperacion){
 	    	cargarTabla(((NodoOperacion)raiz).getOpIzquierdo());
 	    	cargarTabla(((NodoOperacion)raiz).getOpDerecho());
-	    }else if (raiz instanceof NodoDeclararVector) {
-                cargarTabla(((NodoDeclararVector)raiz).getTipo());
-                cargarTabla(((NodoDeclararVector)raiz).getvector());
             }else if (raiz instanceof NodoFor) {
                 cargarTabla(((NodoFor)raiz).getComprobacion());
                 cargarTabla(((NodoFor)raiz).getInicio());
                 cargarTabla(((NodoFor)raiz).getPaso());
                 cargarTabla(((NodoFor)raiz).getSeq_sent());
             }else if (raiz instanceof NodoFunction) {
+                cargarTabla(((NodoFunction)raiz).getNombre());
                 cargarTabla(((NodoFunction)raiz).getParametros());
                 cargarTabla(((NodoFunction)raiz).getSeq_sent());
                 cargarTabla(((NodoFunction)raiz).getRetorna());
             }else if (raiz instanceof NodoProcedure) {
+                cargarTabla(((NodoProcedure)raiz).getNombre());
                 cargarTabla(((NodoProcedure)raiz).getParametros());
                 cargarTabla(((NodoProcedure)raiz).getSeq_sent());
             }else if (raiz instanceof NodollamaFunction) {
+                cargarTabla(((NodollamaFunction)raiz).getNombre());
                 cargarTabla(((NodollamaFunction)raiz).getParametros());
             }else if (raiz instanceof NodollamaProcedure) {
                 cargarTabla(((NodollamaProcedure)raiz).getParametros());
             }else if (raiz instanceof NodoFuncionR ) {
                 cargarTabla(((NodoFuncionR)raiz).getParametros());
-            }/*else if (raiz instanceof NodoListaParametros) {
-                for (int i = 0; i < (((NodoListaParametros)raiz).getLista_parametro()).size(); i++) {
-                    cargarTabla(((NodoListaParametros)raiz).getLista_parametro().get(i));
-                }
-            }*/ else if (raiz instanceof NodoParametro) {
+           
+            } else if (raiz instanceof NodoParametro) {
+
                 cargarTabla(((NodoParametro)raiz).getID());
                 cargarTabla(((NodoParametro)raiz).getTipo());
+            } else if(raiz instanceof NodoDeclararVariable){
+                 cargarTabla(((NodoDeclararVariable)raiz).getTipo());
+                 cargarTabla(((NodoDeclararVariable)raiz).getId());
+            }else if(raiz instanceof NodoVector){
+                cargarTabla(((NodoVector)raiz).getId());
+                //cargarTabla(((NodoVector)raiz).getIndice());
             }
 	    raiz = raiz.getHermanoDerecha();
 	  }
