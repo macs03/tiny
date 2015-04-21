@@ -13,13 +13,13 @@ package ast;
 public class NodoFunction extends NodoBase{
     
     private NodoBase Tipo;
-    private String nombre;
+    private NodoBase nombre;
     private NodoBase parametros;
     private NodoBase seq_sent;
     private NodoBase retorna;
     
 
-    public NodoFunction(NodoBase Tipo, String nombre,NodoBase parametros, NodoBase seq_sent, NodoBase retorna) {
+    public NodoFunction(NodoBase Tipo, NodoBase nombre,NodoBase parametros, NodoBase seq_sent, NodoBase retorna) {
         super();
         this.nombre = nombre;
         this.parametros = parametros;
@@ -61,11 +61,11 @@ public class NodoFunction extends NodoBase{
         this.retorna = retorna;
     }
 
-    public String getNombre() {
+    public NodoBase getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(NodoBase nombre) {
         this.nombre = nombre;
     }
 

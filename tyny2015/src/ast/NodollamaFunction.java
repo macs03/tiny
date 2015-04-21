@@ -12,10 +12,10 @@ package ast;
  */
 public class NodollamaFunction extends NodoBase{
     
-    private String nombre;
+    private NodoBase nombre;
     private NodoBase parametros;
 
-    public NodollamaFunction(String nombre, NodoBase parametros) {
+    public NodollamaFunction(NodoBase nombre, NodoBase parametros) {
         super();
         this.nombre = nombre;
         this.parametros = parametros;
@@ -27,11 +27,11 @@ public class NodollamaFunction extends NodoBase{
         this.parametros = parametros;
     }
 
-    public String getNombre() {
+    public NodoBase getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(NodoBase nombre) {
         this.nombre = nombre;
     }
 

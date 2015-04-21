@@ -90,8 +90,8 @@ non terminal NodoBase asig;
 non terminal NodoBase paso;
 
 non terminal NodoBase declarar_stmt;
-/*non terminal NodoBase declaraciones;
-non terminal NodoBase declaracion; */
+non terminal NodoBase declaraciones;
+non terminal NodoBase declaracion; 
 
 
 /* Precedencia de operadores */
@@ -176,7 +176,7 @@ fun_pro ::= function:fun {: if (modoDepuracion)
 function ::= tipo:tip ID:nombre LPAREN parametro_seq:sp RPAREN bloque:bl return:rt END 
                                                 {: if (modoDepuracion)
                                                         System.out.println("\t regla: 4 ");
-                                                    RESULT = new NodoFunction(tip,nombre,sp,bl,rt);
+                                                    RESULT = new NodoFunction(tip,new NodoIdentificador(nombre),sp,bl,rt);
                                                 :}
              	
                 ;
@@ -184,7 +184,7 @@ function ::= tipo:tip ID:nombre LPAREN parametro_seq:sp RPAREN bloque:bl return:
 procedure ::= VOID ID:nombre LPAREN parametro_seq:sp RPAREN cp:cp 
                                     {: if (modoDepuracion)
                                             System.out.println("\t regla: 5 ");
-                                       RESULT=new NodoProcedure(nombre,sp,cp);
+                                       RESULT=new NodoProcedure(new NodoIdentificador(nombre),sp,cp);
                                     :}
 
            
@@ -464,7 +464,7 @@ paso ::= ID:var ASSIGN simple_exp:ex {: if (modoDepuracion)
 
                 ;
 
-
+/*
 declarar_stmt   ::= tipo:tip ID:var SEMI 
                             {: if (modoDepuracion)
                                   System.out.println("\t regla: Declarar Variable");
@@ -478,21 +478,50 @@ declarar_stmt   ::= tipo:tip ID:var SEMI
                             :}
                                 
                 ;
-/*
-declaraciones   ::= declaraciones COMA declaracion | declaracion 
-
-                ;
-
-declaracion     ::= ID | vector
-                ;
 
 */
+declarar_stmt   ::= tipo:tip  declaraciones:dec SEMI {:
+                                                  RESULT = new NodoDeclararVariable(tip,dec);
+                                           :}
+;
+declaraciones   ::= declaraciones:dec COMA declaracion:de
+                                            {: System.out.println("\t regla: 8a ");
+                                             NodoBase hijoActual = dec;
+                                             if(hijoActual !=null){
+                                                 while(hijoActual.TieneHermano()){
+                                                       hijoActual = hijoActual.getHermanoDerecha();
+                                                }
+                                                hijoActual.setHermanoDerecha(de);
+                                                RESULT=dec;
+                                             }else{
+                                                RESULT=de;
+                                             } 
+                                             :}
+
+| declaracion:dec  {: if (modoDepuracion)
+                                  System.out.println("\t regla: 8b ");
+                              RESULT=dec;
+                           :}
+
+                ;
+
+declaracion     ::= ID:iden  {: if (modoDepuracion)
+                                  System.out.println("\t regla: Declarar Variable");
+                               RESULT = new NodoIdentificador(iden);
+                        :}
+                    | vector:vec  {: if (modoDepuracion)
+                                           System.out.println("\t regla: Declarar Vector");
+                                    RESULT = vec;
+                                   :}
+                ;
+
+
 
 
 
 llamar_functionR ::= ID:iden LPAREN parametro_seq2:sp RPAREN  {: if (modoDepuracion)
                                                                     System.out.println("\t regla: tipo dato INT");
-                                                                 RESULT = new NodollamaFunction(iden,sp) ;
+                                                                 RESULT = new NodollamaFunction(new NodoIdentificador(iden),sp) ;
                                                               :} 
                   
 
@@ -501,38 +530,33 @@ llamar_functionR ::= ID:iden LPAREN parametro_seq2:sp RPAREN  {: if (modoDepurac
 llamar_function ::= ID:iden LPAREN parametro_seq2:sp RPAREN SEMI 
                                     {: if (modoDepuracion)
                                             System.out.println("\t regla: tipo dato INT");
-                                       RESULT = new NodollamaFunction(iden,sp) ;
+                                       RESULT = new NodollamaFunction(new NodoIdentificador(iden),sp) ;
                                     :}  
                 ;
 parametro_seq ::= parametro_seq:sp COMA parametro:pa {: if (modoDepuracion)
-                                                                System.out.println("\t regla:   secuencia de parametros");
-                                                        NodoBase hijoActual = sp;
-                                                        ArrayList<NodoBase>list_par = new ArrayList<>();
-                                                        if(hijoActual !=null){
-                                                            list_par.add(hijoActual);
-                                                            while(hijoActual.TieneHermano()){
-								hijoActual = hijoActual.getHermanoDerecha();
-                                                                list_par.add(hijoActual);
-                                                            }
-                                                            hijoActual.setHermanoDerecha(pa);
-                                                            list_par.add(hijoActual);
-                                                            RESULT=new NodoListaParametros(list_par);
-                                                        }else{ 
-                                                            list_par.add(pa);
-                                                            RESULT=new NodoListaParametros(list_par);
-                                                        }
-                                                    :}
+                                                               System.out.println("\t regla: 8a ");
+                                             NodoBase hijoActual = sp;
+                                             if(hijoActual !=null){
+                                                 while(hijoActual.TieneHermano()){
+                                                       hijoActual = hijoActual.getHermanoDerecha();
+                                                }
+                                                hijoActual.setHermanoDerecha(pa);
+                                                RESULT=sp;
+                                             }else{
+                                                RESULT=pa;
+                                             } 
+                                             
+			            :}
                                                     
+                                                    
+                                       
             
                             | parametro:pa {: if(modoDepuracion) 
-                                                 System.out.println("\t regla 2b");
-                                              ArrayList<NodoBase>list_par = new ArrayList<>();
-                                              list_par.add(pa);
-					      RESULT=new NodoListaParametros(list_par);
-				                    			
+                                                
+				                  RESULT=pa;  			
 				            :} 
 
-                            |  {: RESULT=new NodoListaParametros(); :}
+                            |  {:RESULT = new NodoParametro();:}
                
 
                     ;
@@ -544,38 +568,28 @@ parametro ::= tipo:ti factor:fac {: if (modoDepuracion)
              	
                 ;
 parametro_seq2 ::= parametro_seq2:sp COMA factor:fac {:
-                                                if (modoDepuracion)
-                                                    System.out.println("\t regla: secuencia de parametros");
-                                                NodoBase hijoActual = sp;
-                                                ArrayList<NodoBase>list_par = new ArrayList<>();
-                                                if(hijoActual !=null){
-                                                        list_par.add(hijoActual);
-							while(hijoActual.TieneHermano()){
-								hijoActual = hijoActual.getHermanoDerecha();
-                                                                list_par.add(hijoActual);
-							}
-							hijoActual.setHermanoDerecha(fac);
-                                                        list_par.add(hijoActual);
-                                                        RESULT=new NodoListaParametros(list_par);
-						}else{ 
-                                                        list_par.add(fac);
-							RESULT=new NodoListaParametros(list_par);
-						}
+                                                System.out.println("\t regla: 8a ");
+                                             NodoBase hijoActual = sp;
+                                             if(hijoActual !=null){
+                                                 while(hijoActual.TieneHermano()){
+                                                       hijoActual = hijoActual.getHermanoDerecha();
+                                                }
+                                                hijoActual.setHermanoDerecha(fac);
+                                                RESULT=sp;
+                                             }else{
+                                                RESULT=fac;
+                                             } 
+                                             
 			            :}
 
-                                    | factor:fac {: if(modoDepuracion) System.out.println("\t regla 2b");
-                                                    ArrayList<NodoBase>list_par = new ArrayList<>();
-                                                    list_par.add(fac);
-					            RESULT=new NodoListaParametros(list_par);
-				                    			
-				             :}
+                                    | factor:fac {: RESULT=fac; :}
 
-                                    |  {: RESULT=new NodoListaParametros(); :}
+                                    |  {: :}
                 ;
 
 vector ::= ID:var LCORCHETE NUM:ind RCORCHETE {: if(modoDepuracion) System.out.println("\t regla vector");
                                                       
-                                                        RESULT = new NodollamarVector(var.toString(),(int)ind);
+                                                        RESULT = new NodollamarVector(new NodoIdentificador(var),(int)ind);
 						
 				             :}
 
@@ -615,13 +629,13 @@ return ::= RETURN operacion:op SEMI {: if (modoDepuracion)
 
 tipo ::= INT:tip {: if (modoDepuracion)
                      System.out.println("\t regla: tipo dato INT");
-                     RESULT = new NodoTipo((String)tip);
+                     RESULT = new NodoTipo("int");
              :}
 
 
             | BOOLEAN:tip {: if (modoDepuracion)
                      System.out.println("\t regla: tipo dato boolean");
-                     RESULT = new NodoTipo((String)tip);
+                     RESULT = new NodoTipo("boolean");
               :}
              
             ;

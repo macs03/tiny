@@ -27,9 +27,88 @@ public class Util {
 		    		|| raiz instanceof NodoValor
 		    		|| raiz instanceof NodoIdentificador )
 		    	imprimirNodo(raiz);
+                    
+                    else if (raiz instanceof NodoFor)
+                          System.out.println("For");
+                    else if (raiz instanceof NodoParametro)
+                          System.out.println("parametro");
+                                       
+                    else if (raiz instanceof NodoProcedure)
+                          System.out.println("PROCEDURE");
+                    
+                    else if (raiz instanceof NodoFunction)
+                          System.out.println("FUNCTION");
+                    else if(raiz instanceof  NodoDeclararVariable)
+                          System.out.println("Declara Variable");
+                    
+                    else if(raiz instanceof  NodollamaFunction)
+                          System.out.println("LLama Function");
+                        
+                    else if(raiz instanceof NodoVector)
+                          System.out.println("vector");
+                    
 		    else System.out.println("Tipo de nodo desconocido");;
 		    
 		    /* Hago el recorrido recursivo */
+                    
+                    if(raiz instanceof NodoDeclararVariable){
+                        printSpaces();
+                        imprimirNodo(((NodoDeclararVariable)raiz).getTipo());
+                        imprimirAST(((NodoDeclararVariable)raiz).getId());
+                        
+                    }
+                    
+                                        
+                    if(raiz instanceof NodoVector){
+                        imprimirAST(((NodoVector)raiz).getId());
+                        System.out.println("ind: "+((NodoVector)raiz).getIndice());
+                    }
+                    
+                    if(raiz instanceof NodoFor){
+                        printSpaces();
+		    	System.out.println("**Inicio FOR**");
+                        imprimirAST(((NodoFor)raiz).getInicio());
+                        System.out.println("**Comprobacion FOR**");
+                        imprimirAST(((NodoFor)raiz).getComprobacion());
+                        System.out.println("**Paso FOR**");
+                        imprimirAST(((NodoFor)raiz).getPaso());
+                        System.out.println("**cuerpo FOR**");
+                        imprimirAST(((NodoFor)raiz).getSeq_sent());
+                    }
+                    if(raiz instanceof NodoParametro){
+                        printSpaces();
+                        imprimirNodo(((NodoParametro)raiz).getTipo());
+                        imprimirNodo(((NodoParametro)raiz).getID());
+                        
+                    }
+                   
+                    if(raiz instanceof NodoProcedure){
+                        printSpaces();
+		    	imprimirAST(((NodoProcedure)raiz).getNombre());
+                        imprimirAST(((NodoProcedure)raiz).getParametros());
+                        System.out.println("**cuerpo Procedure**");
+		    	imprimirAST(((NodoProcedure)raiz).getSeq_sent());
+                    }
+                    
+                    if(raiz instanceof NodoFunction){
+                        printSpaces();
+		    	imprimirNodo(((NodoFunction)raiz).getTipo());
+                        imprimirNodo(((NodoFunction)raiz).getNombre());
+                        imprimirAST(((NodoFunction)raiz).getParametros());
+                        System.out.println("**cuerpo Function**");
+		    	imprimirAST(((NodoFunction)raiz).getSeq_sent());
+                        System.out.println("**Return**");
+                        imprimirAST(((NodoFunction)raiz).getRetorna());
+                    }
+                    
+                    if(raiz instanceof NodollamaFunction){
+                        printSpaces();
+                        imprimirAST(((NodollamaFunction)raiz).getNombre());
+                        System.out.println("parametros");
+                        imprimirAST(((NodollamaFunction)raiz).getParametros());
+                        
+                    }
+                    
 		    if (raiz instanceof  NodoIf){
 		    	printSpaces();
 		    	System.out.println("**Prueba IF**");
@@ -111,6 +190,9 @@ static void imprimirNodo( NodoBase raiz )
 		System.out.println("ID, nombre= "+ ((NodoIdentificador)raiz).getNombre());
 	}
 
+        if(	raiz instanceof NodoTipo ){
+		System.out.println("Tipo dato= "+ ((NodoTipo)raiz).getTipo());
+	}
 }
 
 

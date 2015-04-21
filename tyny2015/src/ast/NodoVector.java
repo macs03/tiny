@@ -10,17 +10,17 @@ package ast;
  *
  * @author miguel.cardenas
  */
-public class NodollamarVector extends NodoBase{
+public class NodoVector extends NodoBase{
         
-    private String id;
+    private NodoBase id;
     private int Indice;
     
-    public NodollamarVector( String id,int Indice) {
+    public NodoVector( NodoBase id,int Indice) {
         super();
         this.Indice = Indice;
         this.id = id;
     }
-    public NodollamarVector() {
+    public NodoVector() {
         super();
         this.Indice = 0;
         this.id = null;
@@ -34,11 +34,11 @@ public class NodollamarVector extends NodoBase{
         this.Indice = Indice;
     }
 
-    public String getId() {
+    public NodoBase getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(NodoBase id) {
         this.id = id;
     }
     
