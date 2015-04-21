@@ -589,7 +589,7 @@ parametro_seq2 ::= parametro_seq2:sp COMA factor:fac {:
 
 vector ::= ID:var LCORCHETE NUM:ind RCORCHETE {: if(modoDepuracion) System.out.println("\t regla vector");
                                                       
-                                                        RESULT = new NodollamarVector(new NodoIdentificador(var),(int)ind);
+                                                        RESULT = new NodoVector(new NodoIdentificador(var),(int)ind);
 						
 				             :}
 

@@ -81,9 +81,7 @@ public class TablaSimbolos {
                 cargarTabla(((NodollamaProcedure)raiz).getParametros());
             }else if (raiz instanceof NodoFuncionR ) {
                 cargarTabla(((NodoFuncionR)raiz).getParametros());
-           
             } else if (raiz instanceof NodoParametro) {
-
                 cargarTabla(((NodoParametro)raiz).getID());
                 cargarTabla(((NodoParametro)raiz).getTipo());
             } else if(raiz instanceof NodoDeclararVariable){
