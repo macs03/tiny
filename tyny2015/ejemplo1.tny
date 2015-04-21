@@ -1,10 +1,13 @@
-void laFuncion()
-begin
-    int a=5;
-    int b=5;
-    int c;
-    c = a+b+c;
-end
+int laFuncion()
+	begin
+    	int a;
+    	int b;
+    	int c;
+    	a=5;
+    	b=5;
+    	c = a+b;
+    	return c;
+	end
 
 begin
     laFuncion();

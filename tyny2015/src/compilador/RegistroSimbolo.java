@@ -4,18 +4,28 @@ public class RegistroSimbolo {
 	private String identificador;
 	private int NumLinea;
 	private int DireccionMemoria;
+        private String Tipo;
 	
 	public RegistroSimbolo(String identificador, int numLinea,
-			int direccionMemoria) {
+			int direccionMemoria, String tipo) {
 		super();
 		this.identificador = identificador;
 		NumLinea = numLinea;
 		DireccionMemoria = direccionMemoria;
+                Tipo = tipo;
 	}
 
 	public String getIdentificador() {
 		return identificador;
 	}
+
+        public String getTipo() {
+            return Tipo;
+        }
+
+        public void setTipo(String Tipo) {
+            this.Tipo = Tipo;
+        }
 
 	public int getNumLinea() {
 		return NumLinea;

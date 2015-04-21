@@ -1,4 +1,4 @@
-void fun()
+void fun(int xxx,boolean yyyy)
 begin
     int c,a,d,j,h,vector[50];
     for (a=1;a<5;a=a+1)
@@ -10,7 +10,7 @@ end
 boolean aa(boolean a, int b)
 begin
    boolean c;
-    
+    int x;
     repeat 
         x = x + 1;
         read x;
