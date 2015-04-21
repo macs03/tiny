@@ -1,20 +1,3 @@
-boolean aa(boolean a, int b)
 begin
-   boolean c;
-    
-    repeat 
-        x = x + 1;
-        read x;
-    until x < 5
-
-   return c;
-end
-    
-
-
-begin
-
-  int vector;
-  a= aa(a,b);
-   
+	write 1;   
 end

@@ -71,9 +71,12 @@ public class TablaSimbolos {
                 
 
             } else if (raiz instanceof NodoProcedure) {
-                cargarTabla(((NodoProcedure) raiz).getNombre());
+                
                 cargarTabla(((NodoProcedure) raiz).getParametros());
                 cargarTabla(((NodoProcedure) raiz).getSeq_sent());
+                
+                obtenerVoid(((NodoProcedure)raiz).getNombre());
+                
             } else if (raiz instanceof NodollamaFunction) {
                 cargarTabla(((NodollamaFunction) raiz).getNombre());
                 cargarTabla(((NodollamaFunction) raiz).getParametros());
@@ -156,10 +159,9 @@ public class TablaSimbolos {
        
         String tipo = ((NodoTipo) nodoT).getTipo();
         String nombre = ((NodoIdentificador) nodoN).getNombre();
-        if (!tipo.isEmpty())
-            InsertarSimbolo(nombre, -1, tipo);
-        else
-            InsertarSimbolo(nombre, -1, "void");
+        
+        InsertarSimbolo(nombre, -1, tipo);
+        
     }
 
     private void obtenerTipoParametro(NodoBase nodoI, NodoBase nodoT) {
@@ -176,6 +178,14 @@ public class TablaSimbolos {
         }
         
         }
+        
+    }
+
+    private void obtenerVoid(NodoBase nodoP) {
+
+        String identificador =  ((NodoIdentificador)nodoP).getNombre();
+        
+        InsertarSimbolo(identificador, -1, "void");
         
     }
 }

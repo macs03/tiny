@@ -133,6 +133,14 @@ espacio		= [ \t]+
 "or"            {       if(debug) System.out.println("token OR");
 			return sf.newSymbol("OR",sym.OR);
 			}
+"true"		   {       if(debug) System.out.println("token TRUE");
+			return sf.newSymbol("TRUE",sym.TRUE);
+			}
+
+"false"		{       if(debug) System.out.println("token FALSE");
+			return sf.newSymbol("FALSE",sym.FALSE);
+			}			
+
 "["             {       if(debug) System.out.println("token LCORCHETE");
 			return sf.newSymbol("LCORCHETE",sym.LCORCHETE);
 			}

@@ -52,6 +52,8 @@ terminal BEGIN;
 terminal VOID;
 terminal LCORCHETE;
 terminal RCORCHETE;
+terminal TRUE;
+terminal FALSE;
 
 
 
@@ -88,7 +90,7 @@ non terminal NodoBase procedure;
 non terminal NodoBase fun_pro;
 non terminal NodoBase asig;
 non terminal NodoBase paso;
-
+non terminal NodoBase bool;
 non terminal NodoBase declarar_stmt;
 non terminal NodoBase declaraciones;
 non terminal NodoBase declaracion; 
@@ -426,6 +428,9 @@ factor      ::= LPAREN operacion:op RPAREN {: if (modoDepuracion){
                                                 System.out.println("\t regla: 17d");
                                         RESULT=fr;
                                   :}
+                | bool:bl {:
+                          RESULT = bl;
+                          :}                  
               
 		;
 for_stmt   ::= FOR LPAREN asig:ini SEMI operacion:op SEMI paso:ps RPAREN bloque:bl END 
@@ -639,3 +644,12 @@ tipo ::= INT:tip {: if (modoDepuracion)
               :}
              
             ;
+bool ::= TRUE: verdad {:
+                          RESULT = new NodoBoolean (true);
+                      :}
+                      | FALSE: falso{:
+
+                          RESULT =  new NodoBoolean(false);
+
+                        :} 
+                      ;
