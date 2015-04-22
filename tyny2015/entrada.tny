@@ -1,4 +1,4 @@
-void fun(int xxx,boolean yyyy)
+void fun()
 begin
     int c,a,d,j,h,vector[50];
     for (a=1;a<5;a=a+1)
@@ -26,13 +26,15 @@ return a+b;
 end
 
 begin
+
+    fun(a,as,fdg);
     int a;
     int v[5];
     if x < 5 then
         write x;
     end
-
-    if z<x and B==x  then
+    int z;
+    if z<x and z==x  then
     read d;
     else
     v[0] = d;

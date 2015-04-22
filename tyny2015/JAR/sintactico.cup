@@ -288,7 +288,7 @@ repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL operacion:prueba  {: if (modoDepura
 assign_stmt ::= ID:variable ASSIGN operacion:op SEMI {: if (modoDepuracion)
                                                           System.out.println("\t regla: 11a");
                                                           if(variable!=null)
-					                       RESULT = new NodoAsignacion(variable.toString(),op);
+					                       RESULT = new NodoAsignacion(new NodoIdentificador(variable),op);
 					                  else{
 					                       RESULT = null;
                                                                System.out.println("Ocurrio error en cup # 0001");
@@ -298,14 +298,14 @@ assign_stmt ::= ID:variable ASSIGN operacion:op SEMI {: if (modoDepuracion)
 
                  | vector:vec ASSIGN operacion:op SEMI {: if (modoDepuracion)
                                                                 System.out.println("\t regla: 11b");
-                                                          RESULT=new NodoAsignacion(vec,op);
+                                                          RESULT=new NodoAsignacion(vec,op,null);
                                                  :}
                 ;
 
 read_stmt   ::= READ ID:variable SEMI {: if (modoDepuracion)
                                                 System.out.println("\t regla: 12");
                                                 if(variable!=null)
-					            RESULT = new NodoLeer(variable.toString());
+					            RESULT = new NodoLeer(new NodoIdentificador(variable));
 					        else{
 					            RESULT = null;
 					            System.out.println("Ocurrio error en cup # 0002");
@@ -446,7 +446,7 @@ for_stmt   ::= FOR LPAREN asig:ini SEMI operacion:op SEMI paso:ps RPAREN bloque:
 asig ::= ID:var ASSIGN operacion:op {: if (modoDepuracion)
                                     System.out.println("\t regla: 11a");
                                     if(var!=null)
-				        RESULT = new NodoAsignacion(var.toString(),op);
+				        RESULT = new NodoAsignacion(new NodoIdentificador(var),op);
 				    else{
 				        RESULT = null;
 				        System.out.println("Ocurrio error en cup # 0001");
@@ -459,7 +459,7 @@ asig ::= ID:var ASSIGN operacion:op {: if (modoDepuracion)
 paso ::= ID:var ASSIGN simple_exp:ex {: if (modoDepuracion)
                                             System.out.println("\t regla: 11a");
                                         if(var!=null)
-                                            RESULT = new NodoAsignacion(var.toString(),ex);
+                                            RESULT = new NodoAsignacion(new NodoIdentificador(var),ex);
                                         else{
                                             RESULT = null;
                                             System.out.println("Ocurrio error en cup # 0001");

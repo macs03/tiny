@@ -1,3 +1,17 @@
+int fun()
 begin
-	write 1;   
+    int c,a,d,j,h,vector[50];
+    for (a=1;a<5;a=a+1)
+    begin 
+        int a;
+    end
+return c+a;
+end
+
+begin
+
+ int aa,bbb;
+fun(aa,bbb);
+
+  
 end
