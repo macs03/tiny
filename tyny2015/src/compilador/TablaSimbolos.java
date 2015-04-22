@@ -25,6 +25,7 @@ public class TablaSimbolos {
 
     private HashMap<String, RegistroSimbolo> tabla;
     private int direccion;  //Contador de las localidades de memoria asignadas a la tabla
+    private int Ambito;
 
     public TablaSimbolos() {
         super();
@@ -55,7 +56,7 @@ public class TablaSimbolos {
                 cargarTabla(((NodoAsignacion) raiz).getVector());
             } else if (raiz instanceof NodoEscribir) {
                 cargarTabla(((NodoEscribir) raiz).getExpresion());
-            }else if(raiz instanceof NodoLeer){
+            } else if (raiz instanceof NodoLeer) {
                 cargarTabla(((NodoLeer) raiz).getIdentificador());
             } else if (raiz instanceof NodoOperacion) {
                 cargarTabla(((NodoOperacion) raiz).getOpIzquierdo());
@@ -66,21 +67,22 @@ public class TablaSimbolos {
                 cargarTabla(((NodoFor) raiz).getPaso());
                 cargarTabla(((NodoFor) raiz).getSeq_sent());
             } else if (raiz instanceof NodoFunction) {
-
+                Ambito++;
+                System.out.println("ambito fun: " + Ambito);
                 cargarTabla(((NodoFunction) raiz).getParametros());
                 cargarTabla(((NodoFunction) raiz).getSeq_sent());
                 cargarTabla(((NodoFunction) raiz).getRetorna());
-                
-                obtenerTipoFuncion(((NodoFunction)raiz).getTipo(),((NodoFunction)raiz).getNombre());
-                
+
+                obtenerTipoFuncion(((NodoFunction) raiz).getTipo(), ((NodoFunction) raiz).getNombre());
 
             } else if (raiz instanceof NodoProcedure) {
-                
+                Ambito++;
+                System.out.println("ambito void: " + Ambito);
                 cargarTabla(((NodoProcedure) raiz).getParametros());
                 cargarTabla(((NodoProcedure) raiz).getSeq_sent());
-                
-                obtenerVoid(((NodoProcedure)raiz).getNombre());
-                
+
+                obtenerVoid(((NodoProcedure) raiz).getNombre());
+
             } else if (raiz instanceof NodollamaFunction) {
                 cargarTabla(((NodollamaFunction) raiz).getNombre());
                 cargarTabla(((NodollamaFunction) raiz).getParametros());
@@ -89,14 +91,11 @@ public class TablaSimbolos {
             } else if (raiz instanceof NodoFuncionR) {
                 cargarTabla(((NodoFuncionR) raiz).getParametros());
             } else if (raiz instanceof NodoParametro) {
-                
+
                 //cargarTabla(((NodoParametro) raiz).getID());
                 //cargarTabla(((NodoParametro) raiz).getTipo());
-                
-                obtenerTipoParametro(((NodoParametro) raiz).getID(),((NodoParametro) raiz).getTipo());
-               
-                
-                
+                obtenerTipoParametro(((NodoParametro) raiz).getID(), ((NodoParametro) raiz).getTipo());
+
             } else if (raiz instanceof NodoDeclararVariable) {
 
                 obtenerTipo(((NodoDeclararVariable) raiz).getTipo(), ((NodoDeclararVariable) raiz).getId());
@@ -112,13 +111,18 @@ public class TablaSimbolos {
     //true es nuevo no existe se insertara, false ya existe NO se vuelve a insertar 
     public boolean InsertarSimbolo(String identificador, int numLinea, String tipo) {
         RegistroSimbolo simbolo;
-        if (tabla.containsKey(identificador)) {
+        //System.out.println("id: " + identificador);
+
+        if (tabla.containsKey(identificador) /*&& BuscarSimbolo(identificador).getAmbito() == Ambito*/) {
+            //System.out.println("\t no agrega ambito: " + Ambito);
             return false;
         } else {
-            simbolo = new RegistroSimbolo(identificador, numLinea, direccion++, tipo);
+            simbolo = new RegistroSimbolo(identificador, numLinea, direccion++, tipo, Ambito);
             tabla.put(identificador, simbolo);
+           // System.out.println("\t agrega ambito: " + Ambito);
             return true;
         }
+
     }
 
     public RegistroSimbolo BuscarSimbolo(String identificador) {
@@ -132,6 +136,7 @@ public class TablaSimbolos {
             String s = (String) it.next();
             System.out.println("Consegui Key: " + s + " con direccion: " + BuscarSimbolo(s).getDireccionMemoria());
             System.out.println("tipo: " + BuscarSimbolo(s).getTipo());
+            System.out.println("pertenece al ambito: " + BuscarSimbolo(s).getAmbito());
         }
     }
 
@@ -160,36 +165,35 @@ public class TablaSimbolos {
     }
 
     private void obtenerTipoFuncion(NodoBase nodoT, NodoBase nodoN) {
-       
+
         String tipo = ((NodoTipo) nodoT).getTipo();
         String nombre = ((NodoIdentificador) nodoN).getNombre();
-        
+
         InsertarSimbolo(nombre, -1, tipo);
-        
+
     }
 
     private void obtenerTipoParametro(NodoBase nodoI, NodoBase nodoT) {
 
-        if (((NodoTipo)nodoT)!=null) {
-            
-        
-        String tipo = ((NodoTipo)nodoT).getTipo();
-        while (nodoI != null) {            
-           String identificador = ((NodoIdentificador)nodoI).getNombre();
-            InsertarSimbolo(identificador, -1, tipo);
-            
-            nodoI =  nodoI.getHermanoDerecha();
+        if (((NodoTipo) nodoT) != null) {
+
+            String tipo = ((NodoTipo) nodoT).getTipo();
+            while (nodoI != null) {
+                String identificador = ((NodoIdentificador) nodoI).getNombre();
+                InsertarSimbolo(identificador, -1, tipo);
+
+                nodoI = nodoI.getHermanoDerecha();
+            }
+
         }
-        
-        }
-        
+
     }
 
     private void obtenerVoid(NodoBase nodoP) {
 
-        String identificador =  ((NodoIdentificador)nodoP).getNombre();
-        
+        String identificador = ((NodoIdentificador) nodoP).getNombre();
+
         InsertarSimbolo(identificador, -1, "void");
-        
+
     }
 }

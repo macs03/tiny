@@ -211,10 +211,9 @@ public class Semantico {
     }
 
     private void nodoIdentificador(NodoIdentificador nodoIdentificador) {
-        
         if(ts.BuscarSimbolo(nodoIdentificador.getNombre()).getTipo()==null){
             
-            System.out.println("La variable ("+nodoIdentificador.getNombre()+") no a sido declarada");
+            System.out.println("La variable ("+nodoIdentificador.getNombre()+") no ha sido declarada");
             valido=false;
         }
         

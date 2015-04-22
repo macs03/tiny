@@ -11,6 +11,7 @@ end
 begin
 
  int aa,bbb;
+ int c;
 fun(aa,bbb);
 
   

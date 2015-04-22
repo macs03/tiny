@@ -9,7 +9,16 @@ void laFuncion()
     	boolean ban;
     	ban = true;
 	end
-
+int otraFuncion()
+	begin
+		int a;
+		return a;
+	end
+void prueba()
+	begin
+		int b;
+		int a;
+	end
 begin
     laFuncion();
 end
