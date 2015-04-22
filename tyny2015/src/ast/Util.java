@@ -25,7 +25,8 @@ public class Util {
 		    
 		    else if (raiz instanceof NodoOperacion
 		    		|| raiz instanceof NodoValor
-		    		|| raiz instanceof NodoIdentificador )
+		    		|| raiz instanceof NodoIdentificador
+                                || raiz instanceof NodoBoolean)
 		    	imprimirNodo(raiz);
                     
                     else if (raiz instanceof NodoFor)
@@ -192,6 +193,9 @@ static void imprimirNodo( NodoBase raiz )
 
         if(	raiz instanceof NodoTipo ){
 		System.out.println("Tipo dato= "+ ((NodoTipo)raiz).getTipo());
+	}
+        if(	raiz instanceof NodoBoolean ){
+		System.out.println("Tipo boolean= "+ ((NodoBoolean)raiz).isValor());
 	}
 }
 

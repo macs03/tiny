@@ -50,11 +50,11 @@ public class Compilador {
 		ts.ImprimirClaves();
 	    //REALIZAR ACA ANALISIS SEMANTICO
                 System.out.println("");
-                System.out.println("**ANALISIS SEMANTICO**");
+                System.out.println("****ANALISIS SEMANTICO****");
                 Semantico sem = new Semantico(root,ts);
                 
-//                Generador.setTablaSimbolos(ts);    
-//                Generador.generarCodigoObjeto(root);
+                Generador.setTablaSimbolos(ts);    
+                Generador.generarCodigoObjeto(root);
                     
 	}
 

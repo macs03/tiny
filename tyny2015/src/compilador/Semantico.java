@@ -19,6 +19,7 @@ import ast.NodoParametro;
 import ast.NodoProcedure;
 import ast.NodoRepeat;
 import ast.NodoValor;
+import ast.NodoVector;
 import ast.NodollamaFunction;
 import ast.NodollamaProcedure;
 
@@ -30,194 +31,338 @@ import ast.NodollamaProcedure;
  * @author jorge gomez
  */
 public class Semantico {
+
     private NodoBase raiz;
     private TablaSimbolos ts;
     private boolean valido;
+    private String tipo_dato = null;
 
     public Semantico(NodoBase raiz, TablaSimbolos ts) {
         this.raiz = raiz;
         this.ts = ts;
-        this.valido=true;
+        this.valido = true;
         iniciarSemantico(raiz);
     }
-    
-    
-    
-    public void iniciarSemantico(NodoBase raiz){
-               
-        while (raiz != null && valido) {            
+
+    public void iniciarSemantico(NodoBase raiz) {
+
+        while (raiz != null && valido) {
             if (raiz instanceof NodoEscribir) {
-                nodoEscribir(((NodoEscribir)raiz));
+                nodoEscribir(((NodoEscribir) raiz));
             } else if (raiz instanceof NodoLeer) {
-                nodoLeer(((NodoLeer)raiz));
+                nodoLeer(((NodoLeer) raiz));
             } else if (raiz instanceof NodoIf) {
-                nodoIf(((NodoIf)raiz));
-            } else if (raiz instanceof  NodoFor) {
-                nodoFor (((NodoFor)raiz));
-            } else if (raiz instanceof NodoOperacion){
-                nodoOperacion (((NodoOperacion)raiz));
+                nodoIf(((NodoIf) raiz));
+            } else if (raiz instanceof NodoFor) {
+                nodoFor(((NodoFor) raiz));
+            } else if (raiz instanceof NodoOperacion) {
+                nodoOperacion(((NodoOperacion) raiz), "");
             } else if (raiz instanceof NodoRepeat) {
-                nodoRepeat (((NodoRepeat)raiz));
-            } else if ( raiz instanceof NodoAsignacion) {
-                nodoAsignacion (((NodoAsignacion)raiz));
-            } else if (raiz instanceof NodoFunction){
-                nodoFunction (((NodoFunction)raiz));
-            } else if (raiz instanceof NodoProcedure){
-                nodoProcedure (((NodoProcedure)raiz));
-            } else if (raiz instanceof NodoParametro){
-                nodoParametro (((NodoParametro)raiz));
+                nodoRepeat(((NodoRepeat) raiz));
+            } else if (raiz instanceof NodoAsignacion) {
+                nodoAsignacion(((NodoAsignacion) raiz));
+            } else if (raiz instanceof NodoFunction) {
+                nodoFunction(((NodoFunction) raiz));
+            } else if (raiz instanceof NodoProcedure) {
+                nodoProcedure(((NodoProcedure) raiz));
+            } else if (raiz instanceof NodoParametro) {
+                nodoParametro(((NodoParametro) raiz));
             } else if (raiz instanceof NodoIdentificador) {
                 System.out.println("aquiii");
-                nodoIdentificador(((NodoIdentificador)raiz));
-            } else if(raiz instanceof NodoValor){
-                nodoValor(((NodoValor)raiz));
-            } else if(raiz instanceof NodoBoolean ){
-                nodoBoolean(((NodoBoolean)raiz));
-            }else if (raiz instanceof NodollamaProcedure){
-                nodollamaProcedure (((NodollamaProcedure)raiz));
-            } else if (raiz instanceof NodollamaFunction){
-                nodollamaFunction (((NodollamaFunction)raiz));
+                nodoIdentificador(((NodoIdentificador) raiz));
+            } else if (raiz instanceof NodoValor) {
+                nodoValor(((NodoValor) raiz));
+            } else if (raiz instanceof NodoBoolean) {
+                nodoBoolean(((NodoBoolean) raiz));
+            } else if (raiz instanceof NodollamaProcedure) {
+                nodollamaProcedure(((NodollamaProcedure) raiz));
+            } else if (raiz instanceof NodollamaFunction) {
+                nodollamaFunction(((NodollamaFunction) raiz));
+            }else if (raiz instanceof NodoVector) {
+                nodovector(((NodoVector) raiz));
             }
-            
-            raiz =  raiz.getHermanoDerecha();
+
+            raiz = raiz.getHermanoDerecha();
         }
-        
+
     }
 
     private void nodoEscribir(NodoEscribir nodoEscribir) {
 
-         NodoBase nodo = nodoEscribir.getExpresion();
-         if (nodo instanceof NodoIdentificador ){
-             nodoIdentificador((NodoIdentificador) nodo);
-         
-         }
-        
+        NodoBase nodo = nodoEscribir.getExpresion();
+        if (nodo instanceof NodoIdentificador) {
+            nodoIdentificador((NodoIdentificador) nodo);
+
+        }
+
     }
 
     private void nodoLeer(NodoLeer nodoLeer) {
 
-         NodoBase nodo = nodoLeer.getIdentificador();
-         if (nodo instanceof NodoIdentificador ){
-             nodoIdentificador((NodoIdentificador) nodo);
-         
-         }
-    
+        NodoBase nodo = nodoLeer.getIdentificador();
+        if (nodo instanceof NodoIdentificador) {
+            nodoIdentificador((NodoIdentificador) nodo);
+
+        }
+
     }
 
     private void nodoIf(NodoIf nodoIf) {
-       
-        nodoOperacion((NodoOperacion) nodoIf.getPrueba());
+
+        nodoOperacion((NodoOperacion) nodoIf.getPrueba(), "");
         if (nodoIf != null) {
             iniciarSemantico(nodoIf.getParteThen());
         } else {
             iniciarSemantico(nodoIf.getParteElse());
         }
-        
+
     }
 
     private void nodoFor(NodoFor nodoFor) {
 
         nodoAsignacion((NodoAsignacion) nodoFor.getInicio());
-        nodoOperacion((NodoOperacion) nodoFor.getComprobacion());
+        nodoOperacion((NodoOperacion) nodoFor.getComprobacion(), "");
         nodoAsignacion((NodoAsignacion) nodoFor.getPaso());
         iniciarSemantico(nodoFor.getSeq_sent());
     }
 
-    private void nodoOperacion(NodoOperacion nodoOperacion) {
+    private void nodoOperacion(NodoOperacion nodoOperacion, String tipo) {
 
-        if(nodoOperacion.getOpIzquierdo() instanceof NodoIdentificador){
+        if (nodoOperacion.getOpIzquierdo() instanceof NodoIdentificador) {
             nodoIdentificador((NodoIdentificador) nodoOperacion.getOpIzquierdo());
+            if (valido) {
+
+                if (tipo.equals("")) {
+                    String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpIzquierdo()).getNombre();
+                    tipo = ts.BuscarSimbolo(nodo_tipo).getTipo();
+                } else {
+                    String aux = null;
+                    String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpIzquierdo()).getNombre();
+
+                    aux = ts.BuscarSimbolo(nodo_tipo).getTipo();
+                    if (!aux.equals(tipo)) {
+                        valido = false;
+                        System.out.println("Los datos no tienen el mismo tipo");
+                    }
+                }
+            }
         }
-        
-        if(nodoOperacion.getOpDerecho()instanceof NodoIdentificador){
+
+        if (nodoOperacion.getOpIzquierdo() instanceof NodoValor) {
+
+            if (valido) {
+                if (!tipo.equals("int")) {
+                    valido = false;
+                    System.out.println("Tipo de datos no compatibles");
+                }
+            }
+        }
+
+        if (nodoOperacion.getOpDerecho() instanceof NodoBoolean) {
+
+            if (valido) {
+                if (!tipo.equals("boolean")) {
+                    valido = false;
+                    System.out.println("Tipo de datos no compatibles");
+                }
+            }
+        }
+
+        if (nodoOperacion.getOpDerecho() instanceof NodoIdentificador) {
             nodoIdentificador((NodoIdentificador) nodoOperacion.getOpDerecho());
+            String aux = null;
+            if (valido) {
+                String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpDerecho()).getNombre();
+                aux = ts.BuscarSimbolo(nodo_tipo).getTipo();
+                if (!aux.equals(tipo)) {
+                    valido = false;
+                    System.out.println("Los datos no tienen el mismo tipo");
+                }
+            }
+
         }
-        
-        if(nodoOperacion.getOpDerecho()instanceof NodoOperacion){
-            nodoOperacion((NodoOperacion) nodoOperacion.getOpDerecho());
+
+        if (nodoOperacion.getOpDerecho() instanceof NodollamaFunction) {
+            nodollamaFunction((NodollamaFunction) nodoOperacion.getOpDerecho());
+            if (valido) {
+                NodollamaFunction nodo = (NodollamaFunction) nodoOperacion.getOpDerecho();
+                NodoIdentificador nodo1 = (NodoIdentificador) nodo.getNombre();
+                String tp = ts.BuscarSimbolo(nodo1.getNombre()).getTipo();
+
+                if (tp.equals("void")) {
+                    valido = false;
+                    System.out.println("No se puede hacer la operacion con funcion void");
+                } else {
+                    if (!tipo.equals("")) {
+                        tipo = tp;
+
+                    } else {
+                        if (!tp.equals(tipo)) {
+                            valido = false;
+                            System.out.println("Tipo de datos incompatibles");
+                        }
+                    }
+                }
+            }
+            String aux = null;
+            if (valido) {
+                String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpDerecho()).getNombre();
+                aux = ts.BuscarSimbolo(nodo_tipo).getTipo();
+                if (!aux.equals(tipo)) {
+                    valido = false;
+                    System.out.println("Los datos no tienen el mismo tipo");
+                }
+            }
+
+        }
+
+        if (nodoOperacion.getOpIzquierdo() instanceof NodollamaFunction) {
+            nodollamaFunction((NodollamaFunction) nodoOperacion.getOpIzquierdo());
+            if (valido) {
+                NodollamaFunction nodo = (NodollamaFunction) nodoOperacion.getOpIzquierdo();
+                NodoIdentificador nodo1 = (NodoIdentificador) nodo.getNombre();
+                String tp = ts.BuscarSimbolo(nodo1.getNombre()).getTipo();
+
+                if (tp.equals("void")) {
+                    valido = false;
+                    System.out.println("No se puede hacer la operacion con funcion void");
+                } else {
+                    if (!tp.equals(tipo)) {
+                        valido = false;
+                        System.out.println("Los datos no tienen el mismo tipo");
+                    }
+                }
+            }
+            String aux = null;
+            if (valido) {
+                String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpDerecho()).getNombre();
+                aux = ts.BuscarSimbolo(nodo_tipo).getTipo();
+                if (!aux.equals(tipo)) {
+                    valido = false;
+                    System.out.println("Los datos no tienen el mismo tipo");
+                }
+            }
+
+        }
+
+        if (nodoOperacion.getOpDerecho() instanceof NodoOperacion) {
+            nodoOperacion((NodoOperacion) nodoOperacion.getOpDerecho(), tipo);
         }
     }
 
     private void nodoRepeat(NodoRepeat nodoRepeat) {
-        
+
         iniciarSemantico(nodoRepeat.getCuerpo());
-        nodoOperacion((NodoOperacion) nodoRepeat.getPrueba());
-    
+        nodoOperacion((NodoOperacion) nodoRepeat.getPrueba(), "");
+
     }
 
     private void nodoAsignacion(NodoAsignacion nodoAsignacion) {
-      
-        nodoIdentificador((NodoIdentificador) nodoAsignacion.getIdentificador());
-        if(nodoAsignacion.getOperacion() instanceof NodoOperacion){
-            nodoOperacion((NodoOperacion) nodoAsignacion.getOperacion());
+        String tipo=null;
+        if (nodoAsignacion.getVector() == null) {
+
+            nodoIdentificador((NodoIdentificador) nodoAsignacion.getIdentificador());
+            String nodo_tipo = ((NodoIdentificador) nodoAsignacion.getIdentificador()).getNombre();
+            tipo = ts.BuscarSimbolo(nodo_tipo).getTipo();
+            //System.out.println("tipo: "+tipo);
+        }else if(nodoAsignacion.getVector()!=null){
+          
+            
+            
         }
+            if (nodoAsignacion.getOperacion() instanceof NodoOperacion) {
+                nodoOperacion((NodoOperacion) nodoAsignacion.getOperacion(), tipo);
+            }
+
+            if (nodoAsignacion.getOperacion() instanceof NodoIdentificador) {
+
+                nodoIdentificador((NodoIdentificador) nodoAsignacion.getOperacion());
+                NodoIdentificador nodo = (NodoIdentificador) nodoAsignacion.getOperacion();
+                String aux = null;
+
+                if (valido) {
+                    aux = nodo.getNombre();
+                    aux = ts.BuscarSimbolo(aux).getTipo();
+                    if (!aux.equals(tipo)) {
+                        valido = false;
+                        System.out.println("Los datos no tienen el mismo tipo");
+                    }
+                }
+            }
+            if (nodoAsignacion.getOperacion() instanceof NodoValor) {
+                if (!tipo.equals("int")) {
+                    System.out.println("Tipo de datos no compatibles");
+                    valido = false;
+                }
+            }
+            if (nodoAsignacion.getOperacion() instanceof NodoBoolean) {
+
+                if (!tipo.equals("boolean")) {
+                    valido = false;
+                    System.out.println("Tipo de datos no compatibles");
+                }
+            }
         
-        if(nodoAsignacion.getOperacion() instanceof NodoIdentificador){
-             nodoIdentificador((NodoIdentificador) nodoAsignacion.getOperacion());
-        }
     }
 
     private void nodoFunction(NodoFunction nodoFunction) {
 
         nodoIdentificador((NodoIdentificador) nodoFunction.getNombre());
-        nodoParametro( nodoFunction.getParametros());
+        nodoParametro(nodoFunction.getParametros());
         iniciarSemantico(nodoFunction.getSeq_sent());
-        
-        if(nodoFunction.getRetorna() instanceof NodoOperacion){
-            nodoOperacion((NodoOperacion) nodoFunction.getRetorna());
-        }else if(nodoFunction.getRetorna() instanceof NodoIdentificador){
+
+        if (nodoFunction.getRetorna() instanceof NodoOperacion) {
+            nodoOperacion((NodoOperacion) nodoFunction.getRetorna(), "");
+        } else if (nodoFunction.getRetorna() instanceof NodoIdentificador) {
             nodoIdentificador((NodoIdentificador) nodoFunction.getRetorna());
         }
-        
-        
+
     }
 
     private void nodoProcedure(NodoProcedure nodoProcedure) {
 
         nodoIdentificador((NodoIdentificador) nodoProcedure.getNombre());
-        nodoParametro( nodoProcedure.getParametros());
+        nodoParametro(nodoProcedure.getParametros());
         iniciarSemantico(nodoProcedure.getSeq_sent());
-    
+
     }
 
     private void nodoParametro(NodoBase nodo) {
-        
-        while(nodo!=null){
-           if(nodo instanceof NodoParametro){
-                NodoParametro np = ((NodoParametro)nodo);
-           }
-            nodo=nodo.getHermanoDerecha();
+
+        while (nodo != null) {
+            if (nodo instanceof NodoParametro) {
+                NodoParametro np = ((NodoParametro) nodo);
+            }
+            nodo = nodo.getHermanoDerecha();
         }
-    
+
     }
 
     private void nodollamaProcedure(NodollamaProcedure nodollamaProcedure) {
 
-        
-        
     }
 
     private void nodollamaFunction(NodollamaFunction nodollamaFunction) {
 
         nodoIdentificador((NodoIdentificador) nodollamaFunction.getNombre());
         NodoBase par = nodollamaFunction.getParametros();
-        if(par!=null){
-            if(par instanceof NodoIdentificador){
+        if (par != null) {
+            if (par instanceof NodoIdentificador) {
                 nodoIdentificador((NodoIdentificador) par);
             }
             par.getHermanoDerecha();
         }
-        
+
     }
 
     private void nodoIdentificador(NodoIdentificador nodoIdentificador) {
-        if(ts.BuscarSimbolo(nodoIdentificador.getNombre()).getTipo()==null){
-            
-            System.out.println("La variable ("+nodoIdentificador.getNombre()+") no ha sido declarada");
-            valido=false;
+
+        if (ts.BuscarSimbolo(nodoIdentificador.getNombre()).getTipo() == null) {
+
+            System.out.println("La variable (" + nodoIdentificador.getNombre() + ") no a sido declarada");
+            valido = false;
         }
-        
-    
+
     }
 
     private void nodoValor(NodoValor nodoValor) {
@@ -227,9 +372,9 @@ public class Semantico {
     private void nodoBoolean(NodoBoolean nodoBoolean) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
-    
-  
-    
+
+    private void nodovector(NodoVector nodoVector) {
+         nodoIdentificador((NodoIdentificador) nodoVector.getId());
+    }
+
 }
