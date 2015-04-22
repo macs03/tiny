@@ -45,12 +45,14 @@ public class Compilador {
 		ast.Util.imprimirAST(root);
                 System.out.println("IMPRESION DE LA TABLA");
 
-              TablaSimbolos ts = new TablaSimbolos();
+                TablaSimbolos ts = new TablaSimbolos();
 		ts.cargarTabla(root);
 		ts.ImprimirClaves();
 	    //REALIZAR ACA ANALISIS SEMANTICO
-                Semantico sem = new Semantico();
-                sem.iniciarSemantico(root);
+                System.out.println("");
+                System.out.println("**ANALISIS SEMANTICO**");
+                Semantico sem = new Semantico(root,ts);
+                
 //                Generador.setTablaSimbolos(ts);    
 //                Generador.generarCodigoObjeto(root);
                     

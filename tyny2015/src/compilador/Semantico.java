@@ -30,11 +30,22 @@ import ast.NodollamaProcedure;
  * @author jorge gomez
  */
 public class Semantico {
+    private NodoBase raiz;
+    private TablaSimbolos ts;
+    private boolean valido;
+
+    public Semantico(NodoBase raiz, TablaSimbolos ts) {
+        this.raiz = raiz;
+        this.ts = ts;
+        this.valido=true;
+        iniciarSemantico(raiz);
+    }
     
-    public void iniciarSemantico(NodoBase nodo){
-        NodoBase raiz =  nodo;
-        
-        while (raiz != null) {            
+    
+    
+    public void iniciarSemantico(NodoBase raiz){
+               
+        while (raiz != null && valido) {            
             if (raiz instanceof NodoEscribir) {
                 nodoEscribir(((NodoEscribir)raiz));
             } else if (raiz instanceof NodoLeer) {
@@ -56,6 +67,7 @@ public class Semantico {
             } else if (raiz instanceof NodoParametro){
                 nodoParametro (((NodoParametro)raiz));
             } else if (raiz instanceof NodoIdentificador) {
+                System.out.println("aquiii");
                 nodoIdentificador(((NodoIdentificador)raiz));
             } else if(raiz instanceof NodoValor){
                 nodoValor(((NodoValor)raiz));
@@ -76,23 +88,26 @@ public class Semantico {
 
          NodoBase nodo = nodoEscribir.getExpresion();
          if (nodo instanceof NodoIdentificador ){
-             System.out.println("se puede escribir una variable");
-         }else if(nodo instanceof NodoValor){
-             System.out.println("se puede escribir un numero");
+             nodoIdentificador((NodoIdentificador) nodo);
+         
          }
         
     }
 
     private void nodoLeer(NodoLeer nodoLeer) {
 
-        
+         NodoBase nodo = nodoLeer.getIdentificador();
+         if (nodo instanceof NodoIdentificador ){
+             nodoIdentificador((NodoIdentificador) nodo);
+         
+         }
     
     }
 
     private void nodoIf(NodoIf nodoIf) {
        
-        NodoBase nodo = nodoIf.getPrueba();
-        if (nodo != null) {
+        nodoOperacion((NodoOperacion) nodoIf.getPrueba());
+        if (nodoIf != null) {
             iniciarSemantico(nodoIf.getParteThen());
         } else {
             iniciarSemantico(nodoIf.getParteElse());
@@ -102,43 +117,77 @@ public class Semantico {
 
     private void nodoFor(NodoFor nodoFor) {
 
-        
-        
+        nodoAsignacion((NodoAsignacion) nodoFor.getInicio());
+        nodoOperacion((NodoOperacion) nodoFor.getComprobacion());
+        nodoAsignacion((NodoAsignacion) nodoFor.getPaso());
+        iniciarSemantico(nodoFor.getSeq_sent());
     }
 
     private void nodoOperacion(NodoOperacion nodoOperacion) {
 
+        if(nodoOperacion.getOpIzquierdo() instanceof NodoIdentificador){
+            nodoIdentificador((NodoIdentificador) nodoOperacion.getOpIzquierdo());
+        }
         
-    
+        if(nodoOperacion.getOpDerecho()instanceof NodoIdentificador){
+            nodoIdentificador((NodoIdentificador) nodoOperacion.getOpDerecho());
+        }
+        
+        if(nodoOperacion.getOpDerecho()instanceof NodoOperacion){
+            nodoOperacion((NodoOperacion) nodoOperacion.getOpDerecho());
+        }
     }
 
     private void nodoRepeat(NodoRepeat nodoRepeat) {
         
-        
+        iniciarSemantico(nodoRepeat.getCuerpo());
+        nodoOperacion((NodoOperacion) nodoRepeat.getPrueba());
     
     }
 
     private void nodoAsignacion(NodoAsignacion nodoAsignacion) {
-
+      
+        nodoIdentificador((NodoIdentificador) nodoAsignacion.getIdentificador());
+        if(nodoAsignacion.getOperacion() instanceof NodoOperacion){
+            nodoOperacion((NodoOperacion) nodoAsignacion.getOperacion());
+        }
         
-    
+        if(nodoAsignacion.getOperacion() instanceof NodoIdentificador){
+             nodoIdentificador((NodoIdentificador) nodoAsignacion.getOperacion());
+        }
     }
 
     private void nodoFunction(NodoFunction nodoFunction) {
 
+        nodoIdentificador((NodoIdentificador) nodoFunction.getNombre());
+        nodoParametro( nodoFunction.getParametros());
+        iniciarSemantico(nodoFunction.getSeq_sent());
+        
+        if(nodoFunction.getRetorna() instanceof NodoOperacion){
+            nodoOperacion((NodoOperacion) nodoFunction.getRetorna());
+        }else if(nodoFunction.getRetorna() instanceof NodoIdentificador){
+            nodoIdentificador((NodoIdentificador) nodoFunction.getRetorna());
+        }
         
         
     }
 
     private void nodoProcedure(NodoProcedure nodoProcedure) {
 
-        
+        nodoIdentificador((NodoIdentificador) nodoProcedure.getNombre());
+        nodoParametro( nodoProcedure.getParametros());
+        iniciarSemantico(nodoProcedure.getSeq_sent());
     
     }
 
-    private void nodoParametro(NodoParametro nodoParametro) {
-
+    private void nodoParametro(NodoBase nodo) {
         
+        while(nodo!=null){
+           if(nodo instanceof NodoParametro){
+                NodoParametro np = ((NodoParametro)nodo);
+           }
+            nodo=nodo.getHermanoDerecha();
+        }
     
     }
 
@@ -150,12 +199,26 @@ public class Semantico {
 
     private void nodollamaFunction(NodollamaFunction nodollamaFunction) {
 
+        nodoIdentificador((NodoIdentificador) nodollamaFunction.getNombre());
+        NodoBase par = nodollamaFunction.getParametros();
+        if(par!=null){
+            if(par instanceof NodoIdentificador){
+                nodoIdentificador((NodoIdentificador) par);
+            }
+            par.getHermanoDerecha();
+        }
         
-    
     }
 
     private void nodoIdentificador(NodoIdentificador nodoIdentificador) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        if(ts.BuscarSimbolo(nodoIdentificador.getNombre()).getTipo()==null){
+            
+            System.out.println("La variable ("+nodoIdentificador.getNombre()+") no a sido declarada");
+            valido=false;
+        }
+        
+    
     }
 
     private void nodoValor(NodoValor nodoValor) {
@@ -165,5 +228,9 @@ public class Semantico {
     private void nodoBoolean(NodoBoolean nodoBoolean) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
+    
+  
     
 }

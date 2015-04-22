@@ -15,10 +15,10 @@ public class Util {
 		    	System.out.println("Repeat");
 		    
 		    else if (raiz instanceof  NodoAsignacion)
-		    	System.out.println("Asignacion a: "+((NodoAsignacion)raiz).getIdentificador());
+		    	imprimirAST(((NodoAsignacion)raiz).getIdentificador());
 
 		    else if (raiz instanceof  NodoLeer)  
-		    	System.out.println("Lectura: "+((NodoLeer)raiz).getIdentificador());
+		    	imprimirAST(((NodoLeer)raiz).getIdentificador());
 
 		    else if (raiz instanceof  NodoEscribir)
 		    	System.out.println("Escribir");

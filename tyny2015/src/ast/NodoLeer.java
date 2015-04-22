@@ -1,23 +1,23 @@
 package ast;
 
 public class NodoLeer extends NodoBase {
-	private String id;
+	private NodoBase id;
 
-	public NodoLeer(String identificador) {
+	public NodoLeer(NodoBase identificador) {
 		super();
 		this.id = identificador;
 	}
 
 	public NodoLeer() {
 		super();
-		id="";
+		id=null;
 	}
 
-	public String getIdentificador() {
+	public NodoBase getIdentificador() {
 		return id;
 	}
 
-	public void setExpresion(String identificador) {
+	public void setExpresion(NodoBase identificador) {
 		this.id = identificador;
 	}
 
