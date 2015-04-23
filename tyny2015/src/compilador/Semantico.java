@@ -56,7 +56,7 @@ public class Semantico {
             } else if (raiz instanceof NodoFor) {
                 nodoFor(((NodoFor) raiz));
             } else if (raiz instanceof NodoOperacion) {
-                nodoOperacion(((NodoOperacion) raiz), "");
+                nodoOperacion(((NodoOperacion) raiz));
             } else if (raiz instanceof NodoRepeat) {
                 nodoRepeat(((NodoRepeat) raiz));
             } else if (raiz instanceof NodoAsignacion) {
@@ -109,7 +109,7 @@ public class Semantico {
 
     private void nodoIf(NodoIf nodoIf) {
 
-        nodoOperacion((NodoOperacion) nodoIf.getPrueba(), "");
+        nodoOperacion((NodoOperacion) nodoIf.getPrueba());
         if (nodoIf != null) {
             iniciarSemantico(nodoIf.getParteThen());
         } else {
@@ -121,37 +121,78 @@ public class Semantico {
     private void nodoFor(NodoFor nodoFor) {
 
         nodoAsignacion((NodoAsignacion) nodoFor.getInicio());
-        nodoOperacion((NodoOperacion) nodoFor.getComprobacion(), "");
+        nodoOperacion((NodoOperacion) nodoFor.getComprobacion());
         nodoAsignacion((NodoAsignacion) nodoFor.getPaso());
         iniciarSemantico(nodoFor.getSeq_sent());
     }
 
-    private void nodoOperacion(NodoOperacion nodoOperacion, String tipo) {
-
+    private void nodoOperacion(NodoOperacion nodoOperacion) {
+        String tipo = null;
+        switch(nodoOperacion.getOperacion().toString()){
+            case "menor":
+            case "mayor":
+            case "igual":               
+            case "mas":               
+            case "menos":                
+            case "por":                
+            case "entre": 
+            case "mayorigual":
+            case "menorigual":
+                tipo = "int";
+                break;
+                
+            case "diferente":
+            case "igualigual":
+                String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpIzquierdo()).getNombre();
+                tipo = ts.BuscarSimbolo(nodo_tipo).getTipo();
+                break;
+                
+            case "and":
+            case "or":
+                tipo = "boolean";
+                break;
+        }
+        
         if (nodoOperacion.getOpIzquierdo() instanceof NodoIdentificador) {
             nodoIdentificador((NodoIdentificador) nodoOperacion.getOpIzquierdo());
             if (valido) {
-
-                if (tipo.equals("")) {
-                    String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpIzquierdo()).getNombre();
-                    tipo = ts.BuscarSimbolo(nodo_tipo).getTipo();
-                } else {
                     String aux = null;
                     String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpIzquierdo()).getNombre();
-
                     aux = ts.BuscarSimbolo(nodo_tipo).getTipo();
                     if (!aux.equals(tipo)) {
                         valido = false;
                         System.out.println("Los datos no tienen el mismo tipo");
                     }
-                }
+                
             }
         }
 
         if (nodoOperacion.getOpIzquierdo() instanceof NodoValor) {
+            
+            if (valido) {
+                
+                if (!tipo.equals("int")) {
+                    valido = false;
+                    System.out.println("Tipo de datos no compatibles");
+                }
+            }
+        }
+        if (nodoOperacion.getOpDerecho() instanceof NodoValor) {
 
             if (valido) {
                 if (!tipo.equals("int")) {
+                    valido = false;
+                    System.out.println("Tipo de datos no compatibles");
+                }
+                
+                
+            }
+        }
+        
+         if (nodoOperacion.getOpIzquierdo() instanceof NodoBoolean) {
+
+            if (valido) {  
+                if (!tipo.equals("boolean")) {
                     valido = false;
                     System.out.println("Tipo de datos no compatibles");
                 }
@@ -167,7 +208,43 @@ public class Semantico {
                 }
             }
         }
-
+        if(nodoOperacion.getOpIzquierdo() instanceof NodoVector){
+            
+            nodovector((NodoVector) nodoOperacion.getOpIzquierdo());
+            NodoVector nodo_vector=(NodoVector) nodoOperacion.getOpIzquierdo();
+            NodoIdentificador nodo = ((NodoIdentificador)nodo_vector.getId());
+             String aux = null;
+            
+                if (valido) {
+                    
+                    aux = nodo.getNombre();
+                    aux = ts.BuscarSimbolo(aux).getTipo();
+                    if (!aux.equals(tipo)) {
+                        valido = false;
+                        System.out.println("Los datos no tienen el mismo tipo");
+                    }
+                }
+        }
+        
+        if(nodoOperacion.getOpDerecho()instanceof NodoVector){
+            
+            nodovector((NodoVector) nodoOperacion.getOpDerecho());
+            NodoVector nodo_vector=(NodoVector) nodoOperacion.getOpDerecho();
+            NodoIdentificador nodo = ((NodoIdentificador)nodo_vector.getId());
+            String aux = null;
+            
+                if (valido) {
+                    
+                    aux = nodo.getNombre();
+                    aux = ts.BuscarSimbolo(aux).getTipo();
+                    if (!aux.equals(tipo)) {
+                        valido = false;
+                        System.out.println("Los datos no tienen el mismo tipo");
+                    }
+                }
+        }
+        
+        
         if (nodoOperacion.getOpDerecho() instanceof NodoIdentificador) {
             nodoIdentificador((NodoIdentificador) nodoOperacion.getOpDerecho());
             String aux = null;
@@ -243,17 +320,35 @@ public class Semantico {
                 }
             }
 
+        } 
+        
+        if (nodoOperacion.getOpIzquierdo() instanceof NodoOperacion) {
+            String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpIzquierdo()).getNombre();
+            String aux2 = ts.BuscarSimbolo(nodo_tipo).getTipo();
+            if (!aux2.equals(tipo)) {
+                valido = false;
+                System.out.println("Ambos datos deben ser de tipo "+tipo);
+            }else{
+                nodoOperacion((NodoOperacion) nodoOperacion.getOpIzquierdo());
+            }            
         }
-
+        
         if (nodoOperacion.getOpDerecho() instanceof NodoOperacion) {
-            nodoOperacion((NodoOperacion) nodoOperacion.getOpDerecho(), tipo);
+            String nodo_tipo = ((NodoIdentificador) nodoOperacion.getOpDerecho()).getNombre();
+            String aux2 = ts.BuscarSimbolo(nodo_tipo).getTipo();
+            if (!aux2.equals(tipo)) {
+                valido = false;
+                System.out.println("Ambos datos deben ser de tipo "+tipo);
+            }else{
+                nodoOperacion((NodoOperacion) nodoOperacion.getOpDerecho());
+            }
         }
     }
 
     private void nodoRepeat(NodoRepeat nodoRepeat) {
 
         iniciarSemantico(nodoRepeat.getCuerpo());
-        nodoOperacion((NodoOperacion) nodoRepeat.getPrueba(), "");
+        nodoOperacion((NodoOperacion) nodoRepeat.getPrueba());
 
     }
 
@@ -266,12 +361,32 @@ public class Semantico {
             tipo = ts.BuscarSimbolo(nodo_tipo).getTipo();
             //System.out.println("tipo: "+tipo);
         }else if(nodoAsignacion.getVector()!=null){
-          
-            
+            nodovector((NodoVector) nodoAsignacion.getVector());
+            NodoVector nodo_vector=(NodoVector) nodoAsignacion.getVector();
+            String nodo_tipo = ((NodoIdentificador)nodo_vector.getId()).getNombre();
+            tipo = ts.BuscarSimbolo(nodo_tipo).getTipo();
+           
             
         }
+        
+        if (nodoAsignacion.getOperacion() instanceof NodoVector) {
+
+            nodovector((NodoVector) nodoAsignacion.getOperacion());
+            NodoVector nodo_vector=(NodoVector) nodoAsignacion.getOperacion();
+            NodoIdentificador nodo = ((NodoIdentificador)nodo_vector.getId());
+             String aux = null;
+            
+                if (valido) {
+                    aux = nodo.getNombre();
+                    aux = ts.BuscarSimbolo(aux).getTipo();
+                    if (!aux.equals(tipo)) {
+                        valido = false;
+                        System.out.println("Los datos no tienen el mismo tipo");
+                    }
+                }
+            }
             if (nodoAsignacion.getOperacion() instanceof NodoOperacion) {
-                nodoOperacion((NodoOperacion) nodoAsignacion.getOperacion(), tipo);
+                nodoOperacion((NodoOperacion) nodoAsignacion.getOperacion());
             }
 
             if (nodoAsignacion.getOperacion() instanceof NodoIdentificador) {
@@ -312,7 +427,7 @@ public class Semantico {
         iniciarSemantico(nodoFunction.getSeq_sent());
 
         if (nodoFunction.getRetorna() instanceof NodoOperacion) {
-            nodoOperacion((NodoOperacion) nodoFunction.getRetorna(), "");
+            nodoOperacion((NodoOperacion) nodoFunction.getRetorna());
         } else if (nodoFunction.getRetorna() instanceof NodoIdentificador) {
             nodoIdentificador((NodoIdentificador) nodoFunction.getRetorna());
         }
